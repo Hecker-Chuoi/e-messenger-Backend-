@@ -1,0 +1,19 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /e-messenger
+
+spring:
+  application:
+    name: E-messenger
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/e-messenger
+
+jwt:
+  duration:
+    access-token: 30
+    refresh-token: 4320
+  issuer: "e-messenger.com"
+  secret-key: "2V1jD5V4U7JOAO0XavZU90W2MNaVfcRrdwEzdFejWfvMAFi5dMGoE5CEJAAY9onL"
