@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -24,7 +26,6 @@ import javax.crypto.spec.SecretKeySpec;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
-
     @NonFinal
     @Value("${jwt.secret-key}")
     String secretKey;
@@ -34,6 +35,13 @@ public class SecurityConfig {
             "/v3/api-docs/**",
             "/users/sign-up",
             "/auth/log-in"
+    };
+
+    String[] USER_ENDPOINTS = {
+            "/users/my-info",
+            "/users/update",
+            "/users/find/{identifier}",
+            "/users/change-password"
     };
 
     @Bean
@@ -50,6 +58,21 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         return security.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+                        .allowCredentials(false);
+            }
+        };
     }
 
     private JwtDecoder decoder(){

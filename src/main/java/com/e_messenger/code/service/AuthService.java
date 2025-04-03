@@ -53,7 +53,7 @@ public class AuthService {
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getPhoneNumber())
                 .issuer(issuer)
                 .issueTime(new Date())
                 .expirationTime(new Date(

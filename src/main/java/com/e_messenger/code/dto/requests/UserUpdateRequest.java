@@ -1,5 +1,8 @@
 package com.e_messenger.code.dto.requests;
 
+import com.e_messenger.code.utils.jackson.deserializer.LocalDateDeserializer;
+import com.e_messenger.code.utils.validation.EmailValidation;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,13 +17,14 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UserUpdateRequest {
-    // thông tin cá nhân
+// thông tin cá nhân
+    @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate dob;
     String displayName;
+    @EmailValidation
     String email;
-    String phoneNumber;
 
-    // thông tin hồ sơ
+// thông tin hồ sơ
 //    String avatarUrl;
 //    ActiveStatus activeStatus;
     String bio;

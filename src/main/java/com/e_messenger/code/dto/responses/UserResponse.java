@@ -9,6 +9,7 @@ import lombok.experimental.FieldDefaults;
 import org.bson.types.ObjectId;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -17,21 +18,17 @@ import java.time.LocalDate;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UserResponse {
     ObjectId id;
-    String username;
+    String phoneNumber;
+    String password;
 
-    // thông tin cá nhân
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+// thông tin cá nhân
     LocalDate dob;
     String displayName;
     String email;
-    String phoneNumber;
 
-    // thông tin hồ sơ
+// thông tin hồ sơ
 //    String avatarUrl;
 //    ActiveStatus activeStatus;
     String bio;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    LocalDate createdAt;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    LocalDate updatedAt;
+    LocalDateTime updatedAt;
 }
