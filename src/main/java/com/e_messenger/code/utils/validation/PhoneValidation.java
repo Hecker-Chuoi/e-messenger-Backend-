@@ -12,4 +12,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface PhoneValidation {
+    String message() default "Email invalid";
+
+    Class<?>[] groups() default {};
+
+    Class<?>[] payload() default {};
 }
