@@ -43,6 +43,7 @@ public class AuthService {
         User user = userService.getUserByIdentifier(request.getIdentifier());
         if(encoder.matches(request.getPassword(), user.getPassword()))
             return AuthResponse.builder()
+                    .userId(user.getId())
                     .accessToken(getToken(user, accessTokenDuration))
                     .refreshToken(getToken(user, refreshTokenDuration))
                     .build();
