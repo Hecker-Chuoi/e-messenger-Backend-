@@ -16,6 +16,8 @@ public enum StatusCode {
 
     INVALID_DATE_FORMAT(200, "Date format must be dd/MM/yyyy"),
 
+
+
     UNCATEGORIZED(999, "Uncategorized error");
 
     final int code;
