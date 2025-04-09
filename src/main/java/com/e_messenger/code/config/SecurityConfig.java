@@ -40,7 +40,8 @@ public class SecurityConfig {
     String[] USER_ENDPOINTS = {
             "/users/**",
             "/conversation/**",
-            "/direct/**"
+            "/direct/**",
+            "/auth/refresh-token"
     };
 
     @Bean

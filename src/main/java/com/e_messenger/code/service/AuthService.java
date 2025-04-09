@@ -50,6 +50,15 @@ public class AuthService {
         throw new AppException(StatusCode.UNAUTHENTICATED);
     }
 
+    public AuthResponse refreshAccessToken(){
+        User user = userService.getMyInfo();
+        return AuthResponse.builder()
+                    .userId(user.getId())
+                    .accessToken(getToken(user, accessTokenDuration))
+                    .refreshToken(getToken(user, refreshTokenDuration))
+                    .build();
+    }
+
     private String getToken(User user, int duration){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
