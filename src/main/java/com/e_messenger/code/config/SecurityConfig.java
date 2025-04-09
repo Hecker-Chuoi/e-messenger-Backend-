@@ -38,10 +38,9 @@ public class SecurityConfig {
     };
 
     String[] USER_ENDPOINTS = {
-            "/users/my-info",
-            "/users/update",
-            "/users/find/{identifier}",
-            "/users/change-password"
+            "/users/**",
+            "/conversation/**",
+            "/direct/**"
     };
 
     @Bean
@@ -50,7 +49,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(security))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(USER_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(
                         jwtConfigurer -> jwtConfigurer.decoder(decoder())

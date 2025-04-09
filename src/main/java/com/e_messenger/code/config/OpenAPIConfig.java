@@ -35,6 +35,14 @@ public class OpenAPIConfig {
     }
 
     @Bean
+    public GroupedOpenApi all() {
+        return GroupedOpenApi.builder()
+                .group("All")
+                .pathsToMatch("/**")
+                .build();
+    }
+
+    @Bean
     public GroupedOpenApi auth() {
         return GroupedOpenApi.builder()
                 .group("Authentication")
@@ -47,6 +55,22 @@ public class OpenAPIConfig {
         return GroupedOpenApi.builder()
                 .group("User")
                 .pathsToMatch("/users/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi conversation() {
+        return GroupedOpenApi.builder()
+                .group("Conversation")
+                .pathsToMatch("/conversation/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi directChat() {
+        return GroupedOpenApi.builder()
+                .group("Direct chat")
+                .pathsToMatch("/direct/**")
                 .build();
     }
 }

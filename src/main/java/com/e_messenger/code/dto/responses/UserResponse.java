@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UserResponse {
-    ObjectId id;
+    String id;
     String phoneNumber;
     String password;
 
