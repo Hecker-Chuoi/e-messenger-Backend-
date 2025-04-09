@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class UserService {
             throw new AppException(StatusCode.PHONE_USED);
 
         User user = userMapper.toEntity(request);
+        user.setId(UUID.randomUUID().toString());
         user.setPassword(encoder.encode(request.getPassword()));
         user.setUpdatedAt(LocalDateTime.now());
         return userRepo.save(user);
@@ -47,6 +49,12 @@ public class UserService {
             return userByPhone.get();
         }
         throw new AppException(StatusCode.USER_NOT_FOUND);
+    }
+
+    public User getUserById(String id) {
+        return userRepo.findById(id).orElseThrow(
+                () -> new AppException(StatusCode.UNCATEGORIZED)
+        );
     }
 
     public User getMyInfo(){

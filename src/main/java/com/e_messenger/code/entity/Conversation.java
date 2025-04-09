@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Document(collection = "conversations")
 @Data
@@ -27,7 +28,8 @@ public class Conversation {
     }
 
     ConversationType type;
-    String name; //nullable, only required for group chat
+    String conversationName;
+    List<String> participantIds;
 
     //fields for ui
     String lastMessage;

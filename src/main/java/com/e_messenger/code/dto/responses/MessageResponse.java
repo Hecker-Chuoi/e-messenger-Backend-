@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class MessageResponse {
     String text;
     String senderId;
-    String groupId;
+    String senderName;
 
     LocalDateTime sentAt;
 }

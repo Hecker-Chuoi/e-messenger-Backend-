@@ -22,8 +22,8 @@ public class ConversationService {
     ConversationMapper conversationMapper;
 
     private String getDirectChatId(User curUser, User other){
-        String id1 = curUser.getId().toString();
-        String id2 = other.getId().toString();
+        String id1 = curUser.getId();
+        String id2 = other.getId();
 
         if(id1.compareTo(id2) > 0){
             String tmp = id1;
@@ -43,6 +43,7 @@ public class ConversationService {
         Conversation newDirect = Conversation.builder()
                 .id(getDirectChatId(curUser, other))
                 .type(Conversation.ConversationType.DIRECT)
+                .participantIds(List.of(curUser.getId(), other.getId()))
                 .build();
         return mainRepo.save(newDirect);
     }
@@ -65,7 +66,15 @@ public class ConversationService {
 
     public List<Conversation> getAllDirectChat(){
         User curUser = userService.getMyInfo();
-        return mainRepo.getAllDirectChat(getDirectChatPattern(curUser.getId().toString()));
+
+        List<Conversation> result = mainRepo.getAllDirectChat(getDirectChatPattern(curUser.getId()));
+        for(Conversation conv : result){
+            List<String> ids = conv.getParticipantIds();
+            String otherId = ids.getFirst().equals(curUser.getId()) ? ids.getLast() : ids.getFirst();
+            conv.setConversationName(userService.getUserById(otherId).getDisplayName());
+        }
+
+        return result;
     }
 
     public void updateLastSentInfo(String groupsId, Message message){
@@ -79,8 +88,4 @@ public class ConversationService {
         conversationMapper.updateLastSentInfo(conversation, message);
         mainRepo.save(conversation);
     }
-
-//    public Conversation createGroupChat(List<String> usernames){
-//
-//    }
 }

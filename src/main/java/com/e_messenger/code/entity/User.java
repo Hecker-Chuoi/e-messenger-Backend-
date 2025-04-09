@@ -22,8 +22,7 @@ import java.time.LocalDateTime;
 public class User {
     // thông tin tài khoản
     @Id
-    @Builder.Default
-    ObjectId id = new ObjectId();
+    String id;
 
     @Indexed(unique = true)
     String phoneNumber;
