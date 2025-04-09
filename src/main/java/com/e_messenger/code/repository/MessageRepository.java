@@ -7,5 +7,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.List;
 
 public interface MessageRepository extends MongoRepository<Message, ObjectId> {
-    List<Message> getMessagesByGroupId(String groupId);
+    List<Message> getMessagesByConversationId(String groupId);
 }

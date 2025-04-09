@@ -31,9 +31,9 @@ public class DirectMessageController {
                 .build();
     }
 
-    @GetMapping("/{otherId}")
-    public ApiResponse<List<MessageResponse>> getDirectMessage(@PathVariable String otherId){
-        List<Message> result = service.getDirectMessages(otherId);
+    @GetMapping("/{conversationId}")
+    public ApiResponse<List<MessageResponse>> getDirectMessage(@PathVariable String conversationId){
+        List<Message> result = service.getDirectMessages(conversationId);
         return ApiResponse.<List<MessageResponse>>builder()
                 .result(mapper.toResponses(result))
                 .build();

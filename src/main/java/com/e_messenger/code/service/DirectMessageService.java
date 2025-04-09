@@ -35,8 +35,8 @@ public class DirectMessageService {
 
         Message newMessage = Message.builder()
                 .text(request.getText())
-                .groupId(direct.getId())
-                .senderId(sender.getId().toString())
+                .conversationId(direct.getId())
+                .senderId(sender.getId())
                 .senderName(sender.getDisplayName())
                 .sentAt(LocalDateTime.now())
                 .build();
@@ -45,8 +45,7 @@ public class DirectMessageService {
         return messageRepo.save(newMessage);
     }
 
-    public List<Message> getDirectMessages(String otherId){
-        Conversation direct = conversationService.getDirectChat(otherId);
-        return messageRepo.getMessagesByGroupId(direct.getId());
+    public List<Message> getDirectMessages(String conversationId){
+        return messageRepo.getMessagesByConversationId(conversationId);
     }
 }

@@ -19,7 +19,7 @@ public class Message {
     String text;
     String senderId;
     String senderName;
-    String groupId;
+    String conversationId;
 
     LocalDateTime sentAt;
 }
