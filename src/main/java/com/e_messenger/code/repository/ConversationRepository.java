@@ -11,4 +11,10 @@ public interface ConversationRepository extends MongoRepository<Conversation, St
     Optional<Conversation> findConversationById(String id);
     @Query("{'id': {$regex: ?0}}")
     List<Conversation> getAllDirectChat(String pattern);
+
+    @Query("{'participantIds': ?0, type : ?1}")
+    List<Conversation> getConversationByParticipantIdsContainingAndType(String id, Conversation.ConversationType type);
+
+    @Query("{'participantIds': ?0}")
+    List<Conversation> getConversationByParticipantIdsContaining(String id);
 }

@@ -64,24 +64,54 @@ public class ConversationService {
         return "^%s|%s$".formatted(id, id);
     }
 
+    private String getDirectChatName(User curUser, List<String> ids){
+        String otherId = ids.getFirst().equals(curUser.getId()) ? ids.getLast() : ids.getFirst();
+        return userService.getUserById(otherId).getDisplayName();
+    }
+
+    public Conversation getConversation(String conversationId){
+        return mainRepo.findConversationById(conversationId).orElseThrow(
+                () -> new AppException(StatusCode.UNCATEGORIZED)
+        );
+    }
+
     public List<Conversation> getAllDirectChat(){
         User curUser = userService.getMyInfo();
 
         List<Conversation> result = mainRepo.getAllDirectChat(getDirectChatPattern(curUser.getId()));
         for(Conversation conv : result){
-            List<String> ids = conv.getParticipantIds();
-            String otherId = ids.getFirst().equals(curUser.getId()) ? ids.getLast() : ids.getFirst();
-            conv.setConversationName(userService.getUserById(otherId).getDisplayName());
+            conv.setConversationName(getDirectChatName(curUser, conv.getParticipantIds()));
         }
 
         return result;
     }
 
-    public void updateLastSentInfo(String groupsId, Message message){
-        Conversation conversation = mainRepo.findConversationById(groupsId).orElseThrow(
-                () -> new AppException(StatusCode.UNCATEGORIZED)
-        );
+    public List<Conversation> getAllGroupChat(){
+        User curUser = userService.getMyInfo();
 
+        List<Conversation> result =
+                mainRepo.getConversationByParticipantIdsContainingAndType(
+                        curUser.getId(), Conversation.ConversationType.GROUP
+                );
+
+        return result;
+    }
+
+    public List<Conversation> getAllConversation(){
+        User curUser = userService.getMyInfo();
+
+        List<Conversation> result =
+                mainRepo.getConversationByParticipantIdsContaining(curUser.getId());
+
+        result.forEach(e -> {
+            if(e.getType().equals(Conversation.ConversationType.DIRECT))
+                e.setConversationName(getDirectChatName(curUser, e.getParticipantIds()));
+        });
+
+        return result;
+    }
+
+    public void updateLastSentInfo(Conversation conversation, Message message){
         if(conversation.getLastMessageTime() != null && message.getSentAt().isBefore(conversation.getLastMessageTime()))
             throw new AppException(StatusCode.UNCATEGORIZED);
 

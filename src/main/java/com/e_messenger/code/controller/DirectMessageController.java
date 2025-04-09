@@ -23,9 +23,17 @@ public class DirectMessageController {
     DirectMessageService service;
     MessageMapper mapper;
 
-    @PostMapping("/{otherId}")
-    public ApiResponse<MessageResponse> sendMessage(@PathVariable String otherId, @RequestBody MessageRequest request){
-        Message result = service.sendMessageToUser(otherId, request);
+    @PostMapping("/to-user/{otherId}")
+    public ApiResponse<MessageResponse> sendMessageToUser(@PathVariable String otherId, @RequestBody MessageRequest request){
+        Message result = service.sendDirectMessage(otherId, request);
+        return ApiResponse.<MessageResponse>builder()
+                .result(mapper.toResponse(result))
+                .build();
+    }
+
+    @PostMapping("/to-conversation/{conversationId}")
+    public ApiResponse<MessageResponse> sendMessageToConversation(@PathVariable String conversationId, @RequestBody MessageRequest request){
+        Message result = service.sendMessageToConversation(conversationId, request);
         return ApiResponse.<MessageResponse>builder()
                 .result(mapper.toResponse(result))
                 .build();

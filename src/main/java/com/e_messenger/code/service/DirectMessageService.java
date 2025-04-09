@@ -23,7 +23,7 @@ public class DirectMessageService {
     MessageRepository messageRepo;
 
     @Transactional
-    public Message sendMessageToUser(String otherId, MessageRequest request){
+    public Message sendDirectMessage(String otherId, MessageRequest request){
         User sender = userService.getMyInfo();
         Conversation direct;
         try{
@@ -41,7 +41,24 @@ public class DirectMessageService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        conversationService.updateLastSentInfo(direct.getId(), newMessage);
+        conversationService.updateLastSentInfo(direct, newMessage);
+        return messageRepo.save(newMessage);
+    }
+
+    @Transactional
+    public Message sendMessageToConversation(String conversationId, MessageRequest request){
+        User sender = userService.getMyInfo();
+        Conversation conversation = conversationService.getConversation(conversationId);
+
+        Message newMessage = Message.builder()
+                .text(request.getText())
+                .conversationId(conversation.getId())
+                .senderId(sender.getId())
+                .senderName(sender.getDisplayName())
+                .sentAt(LocalDateTime.now())
+                .build();
+
+        conversationService.updateLastSentInfo(conversation, newMessage);
         return messageRepo.save(newMessage);
     }
 

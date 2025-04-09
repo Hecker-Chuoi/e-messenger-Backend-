@@ -29,6 +29,7 @@ public class Conversation {
 
     ConversationType type;
     String conversationName;
+    @Indexed
     List<String> participantIds;
 
     //fields for ui

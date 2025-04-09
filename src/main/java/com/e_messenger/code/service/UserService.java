@@ -64,7 +64,7 @@ public class UserService {
     private User getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String identifier = auth.getName();
-        return getUserByIdentifier(identifier);
+        return getUserById(identifier);
     }
 
 // update

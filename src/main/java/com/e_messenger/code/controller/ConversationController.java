@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,6 +25,14 @@ public class ConversationController {
     ConversationService service;
     ConversationMapper mapper;
 
+    @GetMapping("/directs/{otherIdentifier}")
+    public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherIdentifier){
+        Conversation result = service.getDirectChat(otherIdentifier);
+        return ApiResponse.<ConversationResponse>builder()
+                .result(mapper.toResponse(result))
+                .build();
+    }
+
     @GetMapping("/directs")
     public ApiResponse<List<ConversationResponse>> getAllDirectChat(){
         List<Conversation> result = service.getAllDirectChat();
@@ -34,15 +43,15 @@ public class ConversationController {
 
     @GetMapping("/groups")
     public ApiResponse<List<ConversationResponse>> getAllGroupChat(){
-        List<Conversation> result = service.getAllDirectChat();
+        List<Conversation> result = service.getAllGroupChat();
         return ApiResponse.<List<ConversationResponse>>builder()
                 .result(mapper.toResponses(result))
                 .build();
     }
 
     @GetMapping("/all")
-    public ApiResponse<List<ConversationResponse>> getAllChat(){
-        List<Conversation> result = service.getAllDirectChat();
+    public ApiResponse<List<ConversationResponse>> getAllConversation(){
+        List<Conversation> result = service.getAllConversation();
         return ApiResponse.<List<ConversationResponse>>builder()
                 .result(mapper.toResponses(result))
                 .build();
