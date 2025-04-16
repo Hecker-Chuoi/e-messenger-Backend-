@@ -1,4 +1,4 @@
-package com.e_messenger.code.service;
+package com.e_messenger.code.service.impl;
 
 import com.e_messenger.code.dto.requests.PasswordChangeRequest;
 import com.e_messenger.code.dto.requests.UserCreationRequest;
@@ -10,14 +10,11 @@ import com.e_messenger.code.mapstruct.UserMapper;
 import com.e_messenger.code.repository.UserRepository;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.bson.types.ObjectId;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,11 +54,7 @@ public class UserService {
         );
     }
 
-    public User getMyInfo(){
-        return getCurrentUser();
-    }
-
-    private User getCurrentUser(){
+    public User getCurrentUser(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String identifier = auth.getName();
         return getUserById(identifier);

@@ -1,6 +1,7 @@
 package com.e_messenger.code.repository;
 
 import com.e_messenger.code.entity.Conversation;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 
@@ -10,11 +11,11 @@ import java.util.Optional;
 public interface ConversationRepository extends MongoRepository<Conversation, String> {
     Optional<Conversation> findConversationById(String id);
     @Query("{'id': {$regex: ?0}}")
-    List<Conversation> getAllDirectChat(String pattern);
+    List<Conversation> findAllDirectChat(String pattern, Pageable pageable);
 
     @Query("{'participantIds': ?0, type : ?1}")
-    List<Conversation> getConversationByParticipantIdsContainingAndType(String id, Conversation.ConversationType type);
+    List<Conversation> findConversationByParticipantIdsContainingAndType(String id, Conversation.ConversationType type, Pageable pageable);
 
     @Query("{'participantIds': ?0}")
-    List<Conversation> getConversationByParticipantIdsContaining(String id);
+    List<Conversation> findConversationByParticipantIdsContaining(String id, Pageable pageable);
 }

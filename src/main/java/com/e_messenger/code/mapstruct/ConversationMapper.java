@@ -1,5 +1,7 @@
 package com.e_messenger.code.mapstruct;
 
+import com.e_messenger.code.dto.requests.GroupCreationRequest;
+import com.e_messenger.code.dto.requests.GroupUpdateRequest;
 import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.Message;
@@ -13,6 +15,12 @@ import java.util.List;
 public interface ConversationMapper {
     ConversationResponse toResponse(Conversation conversation);
     List<ConversationResponse> toResponses(List<Conversation> conversation);
+
+    @Mapping(target = "conversationName", source = "groupName")
+    Conversation toEntity(GroupCreationRequest request);
+
+    @Mapping(target = "conversationName", source = "groupName")
+    void update(@MappingTarget Conversation conversation, GroupUpdateRequest request);
 
     @Mapping(target = "lastMessage", source = "text")
     @Mapping(target = "lastSenderName", source = "senderName")
