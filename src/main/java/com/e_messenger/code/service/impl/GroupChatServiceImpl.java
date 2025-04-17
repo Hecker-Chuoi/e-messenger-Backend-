@@ -17,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -29,6 +30,7 @@ public class GroupChatServiceImpl extends GroupChatService {
     ConversationQueryService queryService;
     UserService userService;
     UserUtil userUtil;
+    ConversationQueryService conversationQueryService;
 
     private <T> List<T> addAll(List<T> list, List<T> items){
         list.addAll(items);

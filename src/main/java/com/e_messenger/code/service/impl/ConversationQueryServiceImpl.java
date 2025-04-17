@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -70,6 +71,17 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         return conversationRepo.findConversationById(conversationId).orElseThrow(
                 () -> new AppException(StatusCode.UNCATEGORIZED)
         );
+    }
+
+    @Override
+    public List<User> getParticipants(String groupId) {
+        Conversation group = getConversationById(groupId);
+
+        List<User> result = new ArrayList<>();
+        for(String id : group.getParticipantIds()){
+            result.add(userService.getUserById(id));
+        }
+        return result;
     }
 
     @Override
