@@ -7,6 +7,7 @@ import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -23,6 +24,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class SecurityConfig {
@@ -33,15 +35,17 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINTS = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/users/sign-up",
+            "/users",
             "/auth/log-in"
     };
 
     String[] USER_ENDPOINTS = {
+            "/auth/**",
             "/users/**",
-            "/conversation/**",
+            "/conversations/**",
             "/direct/**",
-            "/auth/refresh-token"
+            "/group/**",
+            "/chatting/**",
     };
 
     @Bean

@@ -2,10 +2,10 @@ package com.e_messenger.code.repository;
 
 import com.e_messenger.code.entity.Message;
 import org.bson.types.ObjectId;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
-
 public interface MessageRepository extends MongoRepository<Message, ObjectId> {
-    List<Message> getMessagesByConversationId(String groupId);
+    Page<Message> findMessagesByConversationId(String conversationId, Pageable pageable);
 }

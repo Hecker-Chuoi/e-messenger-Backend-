@@ -59,9 +59,17 @@ public class OpenAPIConfig {
     }
 
     @Bean
-    public GroupedOpenApi conversation() {
+    public GroupedOpenApi chat() {
         return GroupedOpenApi.builder()
-                .group("Conversation")
+                .group("Chatting")
+                .pathsToMatch("/chat/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi conversationQuery() {
+        return GroupedOpenApi.builder()
+                .group("Conversation query")
                 .pathsToMatch("/conversation/**")
                 .build();
     }
@@ -71,6 +79,14 @@ public class OpenAPIConfig {
         return GroupedOpenApi.builder()
                 .group("Direct chat")
                 .pathsToMatch("/direct/**")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi groupChat() {
+        return GroupedOpenApi.builder()
+                .group("Group chat")
+                .pathsToMatch("/group/**")
                 .build();
     }
 }

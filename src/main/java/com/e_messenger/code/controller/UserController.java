@@ -7,9 +7,8 @@ import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.UserMapper;
-import com.e_messenger.code.service.UserService;
+import com.e_messenger.code.service.impl.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +24,7 @@ public class UserController {
     UserMapper mapper;
 
 //create
-    @PostMapping("/sign-up")
+    @PostMapping
     public ApiResponse<UserResponse> signUp(@RequestBody @Valid UserCreationRequest request){
         User result = service.signUp(request);
         return ApiResponse.<UserResponse>builder()
@@ -37,14 +36,14 @@ public class UserController {
     @SecurityRequirement(name = "user token")
     @GetMapping("/my-info")
     public ApiResponse<UserResponse> getMyInfo(){
-        User result = service.getMyInfo();
+        User result = service.getCurrentUser();
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
                 .build();
     }
 
     @SecurityRequirement(name = "user token")
-    @GetMapping("/find/{identifier}")
+    @GetMapping("/{identifier}")
     public ApiResponse<UserResponse> findUser(@PathVariable String identifier){
         User result = service.getUserByIdentifier(identifier);
         return ApiResponse.<UserResponse>builder()
@@ -54,7 +53,7 @@ public class UserController {
 
 //update
     @SecurityRequirement(name = "user token")
-    @PutMapping("/update")
+    @PutMapping
     public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request){
         User user = service.updateInfo(request);
         return ApiResponse.<UserResponse>builder()
@@ -63,7 +62,7 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "user token")
-    @PutMapping("/change-password")
+    @PutMapping("/passwords")
     public ApiResponse<String> changePassword(@RequestBody @Valid PasswordChangeRequest request){
         return ApiResponse.<String>builder()
                 .result(service.changePassword(request))

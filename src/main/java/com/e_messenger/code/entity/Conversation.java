@@ -19,7 +19,7 @@ import java.util.List;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Conversation {
     @Id
-    @Indexed
+    @Indexed(unique = true)
     String id;
 
     public enum ConversationType{

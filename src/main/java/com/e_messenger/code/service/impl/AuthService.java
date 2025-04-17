@@ -1,4 +1,4 @@
-package com.e_messenger.code.service;
+package com.e_messenger.code.service.impl;
 
 import com.e_messenger.code.dto.requests.AuthRequest;
 import com.e_messenger.code.dto.responses.AuthResponse;
@@ -51,7 +51,7 @@ public class AuthService {
     }
 
     public AuthResponse refreshAccessToken(){
-        User user = userService.getMyInfo();
+        User user = userService.getCurrentUser();
         return AuthResponse.builder()
                     .userId(user.getId())
                     .accessToken(getToken(user, accessTokenDuration))
