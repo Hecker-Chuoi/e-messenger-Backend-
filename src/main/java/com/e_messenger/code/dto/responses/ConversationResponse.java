@@ -1,7 +1,7 @@
 package com.e_messenger.code.dto.responses;
 
-import com.e_messenger.code.entity.Conversation;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.e_messenger.code.entity.Participant;
+import com.e_messenger.code.entity.enums.ConversationType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -19,9 +19,9 @@ import java.util.List;
 public class ConversationResponse {
     String id;
 
-    Conversation.ConversationType type;
+    ConversationType type;
     String conversationName;
-    List<String> participantIds;
+    List<Participant> participants;
 
     //fields for ui
     String lastMessage;

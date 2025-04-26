@@ -1,9 +1,7 @@
 package com.e_messenger.code.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.e_messenger.code.entity.enums.ConversationType;
+import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -22,15 +20,10 @@ public class Conversation {
     @Indexed(unique = true)
     String id;
 
-    public enum ConversationType{
-        DIRECT,
-        GROUP
-    }
-
     ConversationType type;
     String conversationName;
     @Indexed
-    List<String> participantIds;
+    List<Participant> participants;
 
     //fields for ui
     String lastMessage;
