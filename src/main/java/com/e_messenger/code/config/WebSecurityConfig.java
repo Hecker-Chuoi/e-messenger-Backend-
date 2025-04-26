@@ -16,6 +16,8 @@ import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.crypto.spec.SecretKeySpec;
 
@@ -23,8 +25,7 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableWebSecurity
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-public class SecurityConfig {
-
+public class WebSecurityConfig {
     @NonFinal
     @Value("${jwt.secret-key}")
     String secretKey;
@@ -32,8 +33,17 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINTS = {
             "/swagger-ui/**",
             "/v3/api-docs/**",
-            "/users/sign-up",
+            "/users",
             "/auth/log-in"
+    };
+
+    String[] USER_ENDPOINTS = {
+            "/auth/**",
+            "/users/**",
+            "/conversations/**",
+            "/direct/**",
+            "/group/**",
+            "/chatting/**",
     };
 
     @Bean
@@ -42,7 +52,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configure(security))
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers(USER_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(
                         jwtConfigurer -> jwtConfigurer.decoder(decoder())
@@ -50,6 +60,21 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable);
 
         return security.build();
+    }
+
+    @Bean
+    public WebMvcConfigurer corsConfigurer(){
+        return new WebMvcConfigurer() {
+            @Override
+            public void addCorsMappings(CorsRegistry registry) {
+                registry
+                        .addMapping("/**")
+                        .allowedOrigins("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+                        .allowCredentials(false);
+            }
+        };
     }
 
     private JwtDecoder decoder(){

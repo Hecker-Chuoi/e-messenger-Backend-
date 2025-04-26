@@ -22,24 +22,21 @@ import java.time.LocalDateTime;
 public class User {
     // thông tin tài khoản
     @Id
-    @Builder.Default
-    ObjectId id = new ObjectId();
+    String id;
+
     @Indexed(unique = true)
-    String username;
+    String phoneNumber;
     String password;
 
     // thông tin cá nhân
     LocalDate dob;
     String displayName;
     String email;
-    @Indexed(unique = true)
-    String phoneNumber;
 
     // thông tin hồ sơ
 //    String avatarUrl;
 //    ActiveStatus activeStatus;
     String bio;
-    LocalDateTime createdAt;
     LocalDateTime updatedAt;
 
     // Account is deleted

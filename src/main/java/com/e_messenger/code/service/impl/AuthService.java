@@ -1,4 +1,4 @@
-package com.e_messenger.code.service;
+package com.e_messenger.code.service.impl;
 
 import com.e_messenger.code.dto.requests.AuthRequest;
 import com.e_messenger.code.dto.responses.AuthResponse;
@@ -43,17 +43,28 @@ public class AuthService {
         User user = userService.getUserByIdentifier(request.getIdentifier());
         if(encoder.matches(request.getPassword(), user.getPassword()))
             return AuthResponse.builder()
+                    .userId(user.getId())
                     .accessToken(getToken(user, accessTokenDuration))
                     .refreshToken(getToken(user, refreshTokenDuration))
                     .build();
         throw new AppException(StatusCode.UNAUTHENTICATED);
     }
 
+    public AuthResponse refreshAccessToken(){
+        User user = userService.getCurrentUser();
+        return AuthResponse.builder()
+                    .userId(user.getId())
+                    .accessToken(getToken(user, accessTokenDuration))
+                    .refreshToken(getToken(user, refreshTokenDuration))
+                    .build();
+    }
+
     private String getToken(User user, int duration){
         JWSHeader header = new JWSHeader(JWSAlgorithm.HS512);
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
-                .subject(user.getUsername())
+                .subject(user.getId())
+                .claim("phone number", user.getPhoneNumber())
                 .issuer(issuer)
                 .issueTime(new Date())
                 .expirationTime(new Date(

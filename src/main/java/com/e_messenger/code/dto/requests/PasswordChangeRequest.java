@@ -1,5 +1,6 @@
-package com.e_messenger.code.dto.responses;
+package com.e_messenger.code.dto.requests;
 
+import com.e_messenger.code.utils.validation.PasswordValidation;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,8 +12,9 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AuthResponse {
-    String userId;
-    String accessToken;
-    String refreshToken;
+public class PasswordChangeRequest {
+    String oldPassword;
+    @PasswordValidation
+    String newPassword;
+    String confirmedPassword;
 }

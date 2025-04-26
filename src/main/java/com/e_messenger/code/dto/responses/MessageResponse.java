@@ -6,13 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AuthResponse {
-    String userId;
-    String accessToken;
-    String refreshToken;
+public class MessageResponse {
+    String text;
+    String senderId;
+    String senderName;
+
+    LocalDateTime sentAt;
 }

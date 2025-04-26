@@ -1,4 +1,4 @@
-package com.e_messenger.code.dto.responses;
+package com.e_messenger.code.dto.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +11,6 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class AuthResponse {
-    String userId;
-    String accessToken;
-    String refreshToken;
+public class MessageRequest {
+    String text;
 }
