@@ -4,6 +4,7 @@ import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.Conversation;
+import com.e_messenger.code.entity.Participant;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.mapstruct.UserMapper;
@@ -24,7 +25,6 @@ import java.util.List;
 public class ConversationQueryController {
     ConversationQueryService mainService;
     ConversationMapper conversationMapper;
-    UserMapper userMapper;
 
     @GetMapping("/direct/{otherIdentifier}")
     public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherIdentifier){
@@ -43,10 +43,10 @@ public class ConversationQueryController {
     }
     
     @GetMapping("/{groupId}/participants")
-    public ApiResponse<List<UserResponse>> getParticipants(@PathVariable String groupId){
-        List<User> result = mainService.getParticipants(groupId);
-        return ApiResponse.<List<UserResponse>>builder()
-                .result(userMapper.toResponses(result))
+    public ApiResponse<List<Participant>> getParticipants(@PathVariable String groupId){
+        List<Participant> result = mainService.getParticipants(groupId);
+        return ApiResponse.<List<Participant>>builder()
+                .result(result)
                 .build();
     }
 

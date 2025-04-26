@@ -1,5 +1,6 @@
 package com.e_messenger.code.repository;
 
+import com.e_messenger.code.entity.enums.ConversationType;
 import com.e_messenger.code.entity.Conversation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -13,9 +14,9 @@ public interface ConversationRepository extends MongoRepository<Conversation, St
     @Query("{'id': {$regex: ?0}}")
     List<Conversation> findAllDirectChat(String pattern, Pageable pageable);
 
-    @Query("{'participantIds': ?0, type : ?1}")
-    List<Conversation> findConversationByParticipantIdsContainingAndType(String id, Conversation.ConversationType type, Pageable pageable);
+    @Query("{'participants.participantId': ?0, type : ?1}")
+    List<Conversation> findConversationByParticipantIdsContainingAndType(String id, ConversationType type, Pageable pageable);
 
-    @Query("{'participantIds': ?0}")
+    @Query("{'participants.participantId': ?0}")
     List<Conversation> findConversationByParticipantIdsContaining(String id, Pageable pageable);
 }

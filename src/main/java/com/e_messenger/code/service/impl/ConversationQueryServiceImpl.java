@@ -1,5 +1,7 @@
 package com.e_messenger.code.service.impl;
 
+import com.e_messenger.code.entity.Participant;
+import com.e_messenger.code.entity.enums.ConversationType;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.exception.AppException;
@@ -9,16 +11,14 @@ import com.e_messenger.code.service.ConversationQueryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,10 +55,10 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         User other = userService.getUserByIdentifier(otherIdentifier);
 
         if(curUser.equals(other))
-            throw new AppException(StatusCode.UNCATEGORIZED);
+            throw new AppException(StatusCode.CONVERSATION_NOT_FOUND);
 
         Conversation result = conversationRepo.findConversationById(getDirectChatId(curUser, other)).orElseThrow(
-                () -> new AppException(StatusCode.UNCATEGORIZED)
+                () -> new AppException(StatusCode.CONVERSATION_NOT_FOUND)
         );
         result.setConversationName(other.getDisplayName());
 
@@ -66,7 +66,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     }
 
     @Override
-    @PostAuthorize("returnObject.participantIds.contains(authentication.name)")
+    @PostAuthorize("@participantUtil.hasConversationAccess(returnObject, authentication.name)")
     public Conversation getConversationById(String conversationId) {
         return conversationRepo.findConversationById(conversationId).orElseThrow(
                 () -> new AppException(StatusCode.UNCATEGORIZED)
@@ -74,14 +74,9 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     }
 
     @Override
-    public List<User> getParticipants(String groupId) {
+    public List<Participant> getParticipants(String groupId) {
         Conversation group = getConversationById(groupId);
-
-        List<User> result = new ArrayList<>();
-        for(String id : group.getParticipantIds()){
-            result.add(userService.getUserById(id));
-        }
-        return result;
+        return group.getParticipants();
     }
 
     @Override
@@ -92,7 +87,9 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                 PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("lastMessageTime")))
         );
         for(Conversation conv : result){
-            conv.setConversationName(getDirectChatName(curUser, conv.getParticipantIds()));
+            conv.setConversationName(getDirectChatName(curUser,
+                    conv.getParticipants().stream().map(Participant::getParticipantId)
+                            .collect(Collectors.toList())));
         }
 
         return result;
@@ -103,7 +100,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         User curUser = userService.getCurrentUser();
 
         return conversationRepo.findConversationByParticipantIdsContainingAndType(
-                curUser.getId(), Conversation.ConversationType.GROUP,
+                curUser.getId(), ConversationType.GROUP,
                 PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("lastMessageTime")))
         );
     }
@@ -118,8 +115,9 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                 );
 
         result.forEach(e -> {
-            if(e.getType().equals(Conversation.ConversationType.DIRECT))
-                e.setConversationName(getDirectChatName(curUser, e.getParticipantIds()));
+            if(e.getType().equals(ConversationType.DIRECT))
+                e.setConversationName(getDirectChatName(curUser,
+                        e.getParticipants().stream().map(Participant::getParticipantId).collect(Collectors.toList())));
         });
 
         return result;

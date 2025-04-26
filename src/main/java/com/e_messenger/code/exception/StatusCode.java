@@ -14,6 +14,9 @@ public enum StatusCode {
     EMAIL_FORMAT_INVALID(105, "Please provide proper email"),
     PHONE_FORMAT_INVALID(106, "Please provide phone number in correct format, e.g. 0123456789"),
 
+    CONVERSATION_NOT_FOUND(107, "Conversation not found"),
+    CONVERSATION_ALREADY_EXISTS(108, "This conversation already exists"),
+
     INVALID_DATE_FORMAT(200, "Date format must be dd/MM/yyyy"),
 
 

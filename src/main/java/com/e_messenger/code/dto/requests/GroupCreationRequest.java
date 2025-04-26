@@ -1,5 +1,7 @@
 package com.e_messenger.code.dto.requests;
 
+import com.e_messenger.code.entity.Participant;
+import com.e_messenger.code.entity.enums.ConversationRole;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
