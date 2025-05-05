@@ -34,6 +34,7 @@ public class ChattingService {
     ConversationMapper conversationMapper;
 
     UserService userService;
+    NotificationService notificationService;
     ConversationQueryServiceImpl conversationQueryService;
 
     public Message sendMessage(String conversationId, MessageRequest request){
@@ -49,6 +50,8 @@ public class ChattingService {
 
         messageMapper.update(message, request);
         conversationMapper.updateLastSentInfo(conversation, message);
+
+        notificationService.notifyNewMessage(conversation, messageMapper.toResponse(message));
 
         conversationRepo.save(conversation);
         return mainRepo.save((message));

@@ -8,27 +8,27 @@ import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.service.impl.ChattingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
-@RestController
-@RequestMapping("/chatting")
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @SecurityRequirement(name = "user token")
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@RequiredArgsConstructor
+@RequestMapping("/chat")
+@RestController
 public class ChattingController {
     ChattingService mainService;
     MessageMapper messageMapper;
 
-    @PostMapping("/{conversationId}/send")
-    public ApiResponse<MessageResponse> sendMessage(@PathVariable String conversationId, @RequestBody MessageRequest request){
-        Message result = mainService.sendMessage(conversationId, request);
-        return ApiResponse.<MessageResponse>builder()
-                .result(messageMapper.toResponse(result))
-                .build();
+    @MessageMapping("/send-message")
+    public void sendMessage(SendMessageRequest request) {
+        mainService.sendMessage(request.conversationId, request.messageRequest);
     }
 
     @GetMapping("/histories/{conversationId}")
@@ -42,4 +42,6 @@ public class ChattingController {
                 .result(messageMapper.toResponses(messages))
                 .build();
     }
+
+    record SendMessageRequest(String conversationId, MessageRequest messageRequest){}
 }
