@@ -64,7 +64,6 @@ public class AuthService {
 
         JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                 .subject(user.getId())
-                .claim("phone number", user.getPhoneNumber())
                 .issuer(issuer)
                 .issueTime(new Date())
                 .expirationTime(new Date(

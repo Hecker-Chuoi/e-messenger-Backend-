@@ -55,7 +55,7 @@ public class WebSecurityConfig {
                         .requestMatchers(USER_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(
-                        jwtConfigurer -> jwtConfigurer.decoder(decoder())
+                        jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
                 ))
                 .csrf(AbstractHttpConfigurer::disable);
 
@@ -77,7 +77,8 @@ public class WebSecurityConfig {
         };
     }
 
-    private JwtDecoder decoder(){
+    @Bean
+    public JwtDecoder jwtDecoder(){
         SecretKeySpec spec = new SecretKeySpec(secretKey.getBytes(), "HS512");
         return NimbusJwtDecoder
                 .withSecretKey(spec)
