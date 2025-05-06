@@ -4,11 +4,14 @@ import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.Message;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.exception.AppException;
+import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.repository.ConversationRepository;
 import com.e_messenger.code.repository.MessageRepository;
 import com.e_messenger.code.service.ConversationQueryService;
+import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +23,7 @@ import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -33,13 +37,18 @@ public class ChattingService {
     MessageMapper messageMapper;
     ConversationMapper conversationMapper;
 
+    ParticipantUtil participantUtil;
+
     UserService userService;
     NotificationService notificationService;
     ConversationQueryServiceImpl conversationQueryService;
 
-    public Message sendMessage(String conversationId, MessageRequest request){
-        User curUser = userService.getCurrentUser();
-        Conversation conversation = conversationQueryService.getConversationById(conversationId);
+    public Message sendMessage(String conversationId, MessageRequest request, Principal principal){
+        User curUser = userService.getUserById(principal.getName());
+        Conversation conversation = conversationQueryService.getConversationById(conversationId, principal.getName());
+
+        if(!participantUtil.hasConversationAccess(conversation, principal.getName()))
+            throw new AppException(StatusCode.UNCATEGORIZED);
 
         Message message = Message.builder()
                 .senderId(curUser.getId())
@@ -58,7 +67,7 @@ public class ChattingService {
     }
 
     public List<Message> getMessageHistory(String conversationId, int pageNum, int pageSize){
-        Conversation conversation = conversationQueryService.getConversationById(conversationId);
+        Conversation conversation = conversationQueryService.getConversationById(conversationId, userService.getCurrentUser().getId());
         return mainRepo.findMessagesByConversationId(conversationId,
                 PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("sentAt"))))
                 .stream().toList();

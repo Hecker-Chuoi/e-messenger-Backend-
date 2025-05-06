@@ -11,6 +11,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtException;
@@ -36,10 +37,10 @@ public class WebSocketAuthInterceptor implements ChannelInterceptor {
 
                 try {
                     Jwt jwt = jwtDecoder.decode(token);
-                    String username = jwt.getSubject(); // hoặc jwt.getClaim("username")
+                    String id = jwt.getSubject(); // hoặc jwt.getClaim("username")
 
                     Authentication authentication = new UsernamePasswordAuthenticationToken(
-                            username,
+                            id,
                             null,
                             List.of() // hoặc lấy roles nếu có
                     );

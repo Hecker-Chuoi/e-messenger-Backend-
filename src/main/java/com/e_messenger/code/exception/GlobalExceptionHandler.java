@@ -1,30 +1,23 @@
 package com.e_messenger.code.exception;
 
 import com.e_messenger.code.dto.responses.ApiResponse;
-import jakarta.validation.ConstraintViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.method.annotation.HandlerMethodValidationException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
-    public ResponseEntity<ApiResponse> fallbackExceptionHandling(Exception exception) {
+    public ResponseEntity<ApiResponse> handleFallbackException(Exception exception) {
         exception.printStackTrace();
 
         Throwable cause = getRootCause(exception);
         if(cause instanceof AppException appException) {
-            return appExceptionHandling(appException);
+            return handleAppException(appException);
         }
 
-        return appExceptionHandling(new AppException(StatusCode.UNCATEGORIZED));
+        return handleAppException(new AppException(StatusCode.UNCATEGORIZED));
     }
 
     private Throwable getRootCause(Throwable throwable) {
@@ -34,7 +27,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    public ResponseEntity<ApiResponse> appExceptionHandling(AppException exception) {
+    public ResponseEntity<ApiResponse> handleAppException(AppException exception) {
         exception.printStackTrace();
         return ResponseEntity.badRequest().body(
                 ApiResponse.<AppException>builder()
@@ -42,5 +35,10 @@ public class GlobalExceptionHandler {
                         .message(exception.getStatusCode().getMessage())
                         .build()
         );
+    }
+
+    @MessageExceptionHandler(Exception.class)
+    public void handleFallBackExceptionWs(Exception e) {
+        e.printStackTrace();
     }
 }

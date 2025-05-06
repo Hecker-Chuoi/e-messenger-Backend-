@@ -34,30 +34,31 @@ public class WebSecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/users",
-            "/auth/log-in"
+            "/auth/log-in",
+            "/ws/**"
     };
 
     String[] USER_ENDPOINTS = {
             "/auth/**",
+            "/chat/**",
             "/users/**",
             "/conversations/**",
             "/direct/**",
-            "/group/**",
-            "/chatting/**",
+            "/group/**"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
         security
                 .cors(cors -> cors.configure(security))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(USER_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(
                         jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                ))
-                .csrf(AbstractHttpConfigurer::disable);
+                ));
 
         return security.build();
     }

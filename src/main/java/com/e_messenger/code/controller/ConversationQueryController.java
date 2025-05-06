@@ -9,6 +9,7 @@ import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.mapstruct.UserMapper;
 import com.e_messenger.code.service.ConversationQueryService;
+import com.e_messenger.code.service.impl.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.List;
 public class ConversationQueryController {
     ConversationQueryService mainService;
     ConversationMapper conversationMapper;
+    private final UserService userService;
 
     @GetMapping("/direct/{otherIdentifier}")
     public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherIdentifier){
@@ -36,7 +38,7 @@ public class ConversationQueryController {
 
     @GetMapping("/{conversationId}")
     public ApiResponse<ConversationResponse> getConversation(@PathVariable String conversationId){
-        Conversation result = mainService.getConversationById(conversationId);
+        Conversation result = mainService.getConversationById(conversationId, userService.getCurrentUser().getId());
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();

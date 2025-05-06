@@ -8,6 +8,7 @@ import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.repository.ConversationRepository;
 import com.e_messenger.code.service.ConversationQueryService;
+import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ import java.util.stream.Collectors;
 public class ConversationQueryServiceImpl implements ConversationQueryService {
     UserService userService;
     ConversationRepository conversationRepo;
+    ParticipantUtil participantUtil;
 
     static public String getDirectChatId(User curUser, User other){
         String id1 = curUser.getId();
@@ -66,16 +69,20 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     }
 
     @Override
-    @PostAuthorize("@participantUtil.hasConversationAccess(returnObject, authentication.name)")
-    public Conversation getConversationById(String conversationId) {
-        return conversationRepo.findConversationById(conversationId).orElseThrow(
+    public Conversation getConversationById(String conversationId, String userId) {
+        Conversation conv = conversationRepo.findConversationById(conversationId).orElseThrow(
                 () -> new AppException(StatusCode.UNCATEGORIZED)
         );
+
+        if(!participantUtil.hasConversationAccess(conv, userId))
+            throw new AppException(StatusCode.UNCATEGORIZED);
+
+        return conv;
     }
 
     @Override
     public List<Participant> getParticipants(String groupId) {
-        Conversation group = getConversationById(groupId);
+        Conversation group = getConversationById(groupId, userService.getCurrentUser().getId());
         return group.getParticipants();
     }
 

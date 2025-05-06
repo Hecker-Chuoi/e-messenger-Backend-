@@ -10,7 +10,11 @@ import com.e_messenger.code.service.DirectChatService;
 import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.security.Principal;
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +54,7 @@ public class DirectChatServiceImpl extends DirectChatService {
 
     @Override
     public boolean leaveConversation(String conversationId) {
-        Conversation direct = queryService.getConversationById(conversationId);
+        Conversation direct = queryService.getConversationById(conversationId, userService.getCurrentUser().getId());
         if(direct.getType().equals(ConversationType.DIRECT)){
             conversationRepo.delete(direct);
             return true;
