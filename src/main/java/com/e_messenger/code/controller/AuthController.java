@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     AuthService service;
 
-    @PostMapping("/log-in")
+    @PostMapping("/login")
     public ApiResponse<AuthResponse> logIn(@RequestBody AuthRequest request){
         return ApiResponse.<AuthResponse>builder()
                 .result(service.logIn(request))

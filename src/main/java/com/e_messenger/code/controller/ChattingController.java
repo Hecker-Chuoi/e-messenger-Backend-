@@ -36,8 +36,7 @@ public class ChattingController {
     public ApiResponse<List<MessageResponse>> getMessageHistory(
             @PathVariable String conversationId,
             @RequestParam(defaultValue = "0") int pageNum,
-            @RequestParam(defaultValue = "20") int pageSize,
-            Principal principal
+            @RequestParam(defaultValue = "20") int pageSize
     ){
         List<Message> messages = mainService.getMessageHistory(conversationId, pageNum, pageSize);
         return ApiResponse.<List<MessageResponse>>builder()

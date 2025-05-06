@@ -34,8 +34,12 @@ public class WebSecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/users",
-            "/auth/log-in",
-            "/ws/**"
+            "/auth/login",
+            "/ws/**",
+            "/test/**",
+            "/static/**",
+            "/resources/**",
+            "/js/**"
     };
 
     String[] USER_ENDPOINTS = {

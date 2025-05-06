@@ -1,0 +1,1333 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "E-messenger",
+    "description": "Chat app",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080/e-messenger",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "updateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "signUp",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/passwords": {
+      "put": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "changePassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordChangeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "updateGroupInfo",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "deleteGroup",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}/set-owner": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "setOwner",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ownerId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}/set-member": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "toMember",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}/set-coOwner": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "setCoOwner",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}/participants/remove": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "removeParticipants",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group/{groupId}/participants/add": {
+      "put": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "addParticipants",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/group": {
+      "post": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "createGroupChat",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupCreationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/direct/{otherId}": {
+      "post": {
+        "tags": [
+          "direct-chat-controller"
+        ],
+        "operationId": "createDirectChat",
+        "parameters": [
+          {
+            "name": "otherId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/auth/log-in": {
+      "post": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "logIn",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{identifier}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "findUser",
+        "parameters": [
+          {
+            "name": "identifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/users/my-info": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getMyInfo",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseUserResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/{groupId}/participants": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getParticipants",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListParticipant"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/{conversationId}": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getConversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/group": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getAllGroupChat",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/direct": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getAllDirectChat",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/direct/{otherIdentifier}": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getDirectChat",
+        "parameters": [
+          {
+            "name": "otherIdentifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/conversations/all": {
+      "get": {
+        "tags": [
+          "conversation-query-controller"
+        ],
+        "operationId": "getAllConversation",
+        "parameters": [
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListConversationResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/chat/histories/{conversationId}": {
+      "get": {
+        "tags": [
+          "chatting-controller"
+        ],
+        "operationId": "getMessageHistory",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "pageNum",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseListMessageResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/auth/refresh-tokens": {
+      "get": {
+        "tags": [
+          "auth-controller"
+        ],
+        "operationId": "getNewAccessToken",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseAuthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/group/{groupId}/leave": {
+      "delete": {
+        "tags": [
+          "group-chat-controller"
+        ],
+        "operationId": "leaveConversation",
+        "parameters": [
+          {
+            "name": "groupId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    },
+    "/direct/{conversationId}": {
+      "delete": {
+        "tags": [
+          "direct-chat-controller"
+        ],
+        "operationId": "deleteConversation",
+        "parameters": [
+          {
+            "name": "conversationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseString"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "user token": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "UserUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseUserResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/UserResponse"
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PasswordChangeRequest": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string"
+          },
+          "newPassword": {
+            "type": "string"
+          },
+          "confirmedPassword": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseString": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "groupName": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseConversationResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/ConversationResponse"
+          }
+        }
+      },
+      "ConversationResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "DIRECT",
+              "GROUP"
+            ]
+          },
+          "conversationName": {
+            "type": "string"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Participant"
+            }
+          },
+          "lastMessage": {
+            "type": "string"
+          },
+          "lastSenderId": {
+            "type": "string"
+          },
+          "lastSenderName": {
+            "type": "string"
+          },
+          "lastMessageTime": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Participant": {
+        "type": "object",
+        "properties": {
+          "participantId": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "OWNER",
+              "CO_OWNER",
+              "MEMBER"
+            ]
+          },
+          "joinAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "UserCreationRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string",
+            "format": "date"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "bio": {
+            "type": "string"
+          }
+        }
+      },
+      "GroupCreationRequest": {
+        "type": "object",
+        "properties": {
+          "groupName": {
+            "type": "string"
+          },
+          "participantIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AuthRequest": {
+        "type": "object",
+        "properties": {
+          "identifier": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseAuthResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AuthResponse"
+          }
+        }
+      },
+      "AuthResponse": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "accessToken": {
+            "type": "string"
+          },
+          "refreshToken": {
+            "type": "string"
+          }
+        }
+      },
+      "ApiResponseListParticipant": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Participant"
+            }
+          }
+        }
+      },
+      "ApiResponseListConversationResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationResponse"
+            }
+          }
+        }
+      },
+      "ApiResponseListMessageResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageResponse"
+            }
+          }
+        }
+      },
+      "MessageResponse": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "senderId": {
+            "type": "string"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "sentAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "message": {
+            "type": "string"
+          },
+          "result": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "user token": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
