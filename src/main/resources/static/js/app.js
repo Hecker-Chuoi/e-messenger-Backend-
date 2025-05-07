@@ -25,7 +25,7 @@ function login() {
 }
 
 function connect() {
-    const socket = new WebSocket("ws://localhost:8080/e-messenger/ws");
+    const socket = new SockJS("http://localhost:8080/e-messenger/ws");
     stompClient = Stomp.over(socket);
 
     const headers = {
@@ -35,8 +35,10 @@ function connect() {
     stompClient.connect(headers, function (frame) {
         log("Connected: " + frame);
         stompClient.subscribe("/user/queue/messages", function (message) {
-            const msg = JSON.parse(message.body);
-            showMessage(msg.senderName + ": " + msg.content);
+            log("Received!");
+            message = JSON.parse(message.body);
+            console.log(message);
+            showMessage(message.senderName + ": " + message.text);
         });
     }, function (error) {
         log("Connect error: " + error);

@@ -22,3 +22,11 @@ api-config:
   title: "E-messenger"
   description: "Chat app"
   version: "1.0.0"
+
+logging:
+  level:
+    org:
+      springframework:
+        messaging: DEBUG
+        web:
+          socket: DEBUG
