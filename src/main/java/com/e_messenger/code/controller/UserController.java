@@ -7,6 +7,7 @@ import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.UserMapper;
+import com.e_messenger.code.service.impl.CloudStorageService;
 import com.e_messenger.code.service.impl.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -14,6 +15,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/users")
@@ -22,10 +26,12 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     UserService service;
     UserMapper mapper;
+    CloudStorageService storageService;
 
 //create
     @PostMapping
-    public ApiResponse<UserResponse> signUp(@RequestBody @Valid UserCreationRequest request){
+    public ApiResponse<UserResponse> signUp(@RequestParam(value = "avatar", required = false) MultipartFile avatar,
+                                            @RequestBody @Valid UserCreationRequest request){
         User result = service.signUp(request);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
@@ -56,6 +62,15 @@ public class UserController {
     @PutMapping
     public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request){
         User user = service.updateInfo(request);
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(user))
+                .build();
+    }
+
+    @SecurityRequirement(name = "user token")
+    @PutMapping("/avatars")
+    public ApiResponse<UserResponse> updateAvatar(@RequestParam MultipartFile avatar) throws IOException {
+        User user = service.setAvatar(avatar);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(user))
                 .build();
