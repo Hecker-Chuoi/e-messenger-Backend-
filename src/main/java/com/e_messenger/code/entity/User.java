@@ -1,5 +1,6 @@
 package com.e_messenger.code.entity;
 
+import com.e_messenger.code.entity.enums.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,12 +31,12 @@ public class User {
 
     // thông tin cá nhân
     LocalDate dob;
+    Gender gender;
     String displayName;
     String email;
 
     // thông tin hồ sơ
-//    String avatarUrl;
-//    ActiveStatus activeStatus;
+    String avatarUrl;
     String bio;
     LocalDateTime updatedAt;
 

@@ -10,6 +10,9 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/e-messenger
+  servlet:
+    multipart:
+      max-file-size: 10MB
 
 jwt:
   duration:
@@ -30,3 +33,11 @@ logging:
         messaging: DEBUG
         web:
           socket: DEBUG
+
+cloud:
+  config:
+    url: "cloudinary://315221571495558:fscMIaDJBc8RZaWoa7jXDNRSsUI@dtvuu5b2g"
+  avatar:
+    otherDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746720818/other_default_avatar_fif3lm.jpg"
+    manDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746719010/man_default_avatar_d5ck0s.jpg"
+    womanDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746719010/woman_default_avatar_i1telw.jpg"

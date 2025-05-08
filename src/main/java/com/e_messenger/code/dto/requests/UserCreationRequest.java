@@ -1,5 +1,7 @@
 package com.e_messenger.code.dto.requests;
 
+import com.e_messenger.code.entity.enums.Gender;
+import com.e_messenger.code.utils.jackson.deserializer.GenderDeserializer;
 import com.e_messenger.code.utils.jackson.deserializer.LocalDateDeserializer;
 import com.e_messenger.code.utils.validation.EmailValidation;
 import com.e_messenger.code.utils.validation.PasswordValidation;
@@ -28,12 +30,12 @@ public class UserCreationRequest {
     // thông tin cá nhân
     @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate dob;
+    @JsonDeserialize(using = GenderDeserializer.class)
+    Gender gender;
     String displayName;
     @EmailValidation
     String email;
 
     // thông tin hồ sơ
-//    String avatarUrl;
-//    ActiveStatus activeStatus;
     String bio;
 }

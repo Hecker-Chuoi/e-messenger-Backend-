@@ -4,18 +4,24 @@ import com.e_messenger.code.dto.requests.PasswordChangeRequest;
 import com.e_messenger.code.dto.requests.UserCreationRequest;
 import com.e_messenger.code.dto.requests.UserUpdateRequest;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.entity.enums.Gender;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.UserMapper;
 import com.e_messenger.code.repository.UserRepository;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +32,19 @@ public class UserService {
     UserRepository userRepo;
     UserMapper userMapper;
     PasswordEncoder encoder;
+    CloudStorageService storageService;
+
+    @NonFinal
+    @Value("${cloud.avatar.otherDefault}")
+    String otherDefault;
+
+    @NonFinal
+    @Value("${cloud.avatar.manDefault}")
+    String manDefault;
+
+    @NonFinal
+    @Value("${cloud.avatar.womanDefault}")
+    String womanDefault;
 
 // create
     public User signUp(UserCreationRequest request) {
@@ -36,6 +55,13 @@ public class UserService {
         user.setId(UUID.randomUUID().toString());
         user.setPassword(encoder.encode(request.getPassword()));
         user.setUpdatedAt(LocalDateTime.now());
+
+        if(user.getGender().equals(Gender.MALE))
+            user.setAvatarUrl(manDefault);
+        else if(user.getGender().equals(Gender.FEMALE))
+            user.setAvatarUrl(womanDefault);
+        else user.setAvatarUrl(otherDefault);
+
         return userRepo.save(user);
     }
 
@@ -66,6 +92,13 @@ public class UserService {
         userMapper.updateUser(user, request);
         user.setUpdatedAt(LocalDateTime.now());
 
+        return userRepo.save(user);
+    }
+
+    public User setAvatar(MultipartFile file) throws IOException {
+        User user = getCurrentUser();
+        Map result = storageService.uploadImage(file, "E-messenger/Avatar");
+        user.setAvatarUrl((String) result.get("url"));
         return userRepo.save(user);
     }
 

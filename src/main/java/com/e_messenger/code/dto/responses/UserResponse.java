@@ -27,7 +27,7 @@ public class UserResponse {
     String email;
 
 // thông tin hồ sơ
-//    String avatarUrl;
+    String avatarUrl;
 //    ActiveStatus activeStatus;
     String bio;
     LocalDateTime updatedAt;
