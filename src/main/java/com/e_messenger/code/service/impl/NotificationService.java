@@ -17,7 +17,6 @@ public class NotificationService {
 
     public void notifyNewMessage(Conversation conversation, MessageResponse response) {
         for(Participant participant : conversation.getParticipants()) {
-            System.out.println(participant.getParticipantId());
             messagingTemplate.convertAndSendToUser(
                     participant.getParticipantId(),
                     "/queue/messages",

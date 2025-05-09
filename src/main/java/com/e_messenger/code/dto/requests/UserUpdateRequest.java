@@ -1,7 +1,6 @@
 package com.e_messenger.code.dto.requests;
 
 import com.e_messenger.code.entity.enums.Gender;
-import com.e_messenger.code.utils.jackson.deserializer.GenderDeserializer;
 import com.e_messenger.code.utils.jackson.deserializer.LocalDateDeserializer;
 import com.e_messenger.code.utils.validation.EmailValidation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -27,7 +26,6 @@ public class UserUpdateRequest {
     String email;
 
 // thông tin hồ sơ
-    @JsonDeserialize(using = GenderDeserializer.class)
     Gender gender;
     String bio;
 }

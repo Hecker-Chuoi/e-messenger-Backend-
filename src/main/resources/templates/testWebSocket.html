@@ -21,9 +21,24 @@
     </div>
 
     <div>
+        <label><input type="radio" name="messageType" value="TEXT" checked> Text</label>
+        <label><input type="radio" name="messageType" value="IMAGE"> Image</label>
+        <label><input type="radio" name="messageType" value="AUDIO"> Audio</label>
+        <br>
+        <input type="file" id="fileInput" style="display:none;" />
         <input type="text" id="messageInput" placeholder="Enter message">
         <button onclick="sendMessage()">Send Message</button>
     </div>
+
+    <script>
+        document.querySelectorAll("input[name='messageType']").forEach(radio => {
+            radio.addEventListener("change", () => {
+                const type = document.querySelector("input[name='messageType']:checked").value;
+                document.getElementById("fileInput").style.display = (type === "TEXT") ? "none" : "inline-block";
+                document.getElementById("messageInput").style.display = (type === "TEXT") ? "inline-block" : "none";
+            });
+        });
+    </script>
 
     <div id="chatBox">
         <h3>Messages</h3>

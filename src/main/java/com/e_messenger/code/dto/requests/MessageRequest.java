@@ -1,5 +1,6 @@
 package com.e_messenger.code.dto.requests;
 
+import com.e_messenger.code.entity.enums.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,5 +13,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class MessageRequest {
-    String text;
+    String content;
+    MessageType type;
 }

@@ -22,9 +22,10 @@ public interface ConversationMapper {
     @Mapping(target = "conversationName", source = "groupName")
     void update(@MappingTarget Conversation conversation, GroupUpdateRequest request);
 
-    @Mapping(target = "lastMessage", source = "text")
+    @Mapping(target = "lastMessage", source = "content")
     @Mapping(target = "lastSenderName", source = "senderName")
     @Mapping(target = "lastMessageTime", source = "sentAt")
     @Mapping(target = "lastSenderId", source = "senderId")
+    @Mapping(target = "type", ignore = true)
     void updateLastSentInfo(@MappingTarget Conversation conversation, Message lastMessage);
 }
