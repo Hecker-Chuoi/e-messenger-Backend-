@@ -1,5 +1,6 @@
 package com.e_messenger.code.entity;
 
+import com.e_messenger.code.entity.enums.MessageType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,7 +17,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class Message {
-    String text;
+    String content;
+    MessageType type;
     String senderId;
     String senderName;
     String conversationId;

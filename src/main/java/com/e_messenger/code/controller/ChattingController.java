@@ -4,6 +4,7 @@ import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.MessageResponse;
 import com.e_messenger.code.entity.Message;
+import com.e_messenger.code.entity.enums.MessageType;
 import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.service.impl.ChattingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -15,6 +16,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -28,8 +30,12 @@ public class ChattingController {
     MessageMapper messageMapper;
 
     @MessageMapping("/{conversationId}/send-message")
-    public void sendMessage(@DestinationVariable String conversationId, @Payload MessageRequest request, Principal principal) {
-        mainService.sendMessage(conversationId, request, principal);
+    public void sendMessage(@DestinationVariable String conversationId, @Payload MessageRequest request, Principal principal) throws IOException {
+        MessageType type = request.getType();
+        if(type.equals(MessageType.TEXT))
+            mainService.sendText(conversationId, request, principal);
+        else
+            mainService.sendFile(conversationId, request, principal);
     }
 
     @GetMapping("/histories/{conversationId}")
