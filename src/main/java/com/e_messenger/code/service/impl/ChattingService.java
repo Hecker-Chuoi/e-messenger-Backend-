@@ -1,31 +1,32 @@
 package com.e_messenger.code.service.impl;
 
+import com.cloudinary.Cloudinary;
 import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.Message;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.entity.enums.MessageType;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.repository.ConversationRepository;
 import com.e_messenger.code.repository.MessageRepository;
-import com.e_messenger.code.service.ConversationQueryService;
 import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import lombok.experimental.NonFinal;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PostAuthorize;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -37,18 +38,14 @@ public class ChattingService {
     MessageMapper messageMapper;
     ConversationMapper conversationMapper;
 
-    ParticipantUtil participantUtil;
-
     UserService userService;
+    Cloudinary cloudinary;
     NotificationService notificationService;
     ConversationQueryServiceImpl conversationQueryService;
 
-    public Message sendMessage(String conversationId, MessageRequest request, Principal principal){
+    public Message sendText(String conversationId, MessageRequest request, Principal principal){
         User curUser = userService.getUserById(principal.getName());
         Conversation conversation = conversationQueryService.getConversationById(conversationId, principal.getName());
-
-        if(!participantUtil.hasConversationAccess(conversation, principal.getName()))
-            throw new AppException(StatusCode.UNCATEGORIZED);
 
         Message message = Message.builder()
                 .senderId(curUser.getId())
@@ -58,6 +55,45 @@ public class ChattingService {
                 .build();
 
         messageMapper.update(message, request);
+        conversationMapper.updateLastSentInfo(conversation, message);
+
+        notificationService.notifyNewMessage(conversation, messageMapper.toResponse(message));
+
+        conversationRepo.save(conversation);
+        return mainRepo.save((message));
+    }
+
+    public Message sendFile(String conversationId, MessageRequest request, Principal principal) throws IOException {
+        String[] encoded = request.getContent().split(";");
+        String mimeType = encoded[0].split(":")[1];
+        String base64 = encoded[1].split(",")[1];
+
+        String generalType = mimeType.split("/")[0];
+        String specificType = mimeType.split("/")[1];
+        System.out.println(generalType + " " + specificType);
+
+        if(!generalType.toUpperCase().equals(request.getType().toString()))
+            throw new AppException(StatusCode.UNCATEGORIZED);
+
+        User curUser = userService.getUserById(principal.getName());
+        Conversation conversation = conversationQueryService.getConversationById(conversationId, principal.getName());
+
+        byte[] fileBytes = Base64.getDecoder().decode(base64);
+        Map config = new HashMap();
+        config.put("resource_type", MessageType.fromString(generalType).getUploadOption());
+        config.put("folder", "Conversation/%s".formatted(conversationId));
+
+        Map result = cloudinary.uploader().upload(fileBytes, config);
+
+        Message message = Message.builder()
+                .content(result.get("url").toString())
+                .type(request.getType())
+                .senderId(curUser.getId())
+                .senderName(curUser.getDisplayName())
+                .conversationId(conversationId)
+                .sentAt(LocalDateTime.now())
+                .build();
+
         conversationMapper.updateLastSentInfo(conversation, message);
 
         notificationService.notifyNewMessage(conversation, messageMapper.toResponse(message));

@@ -30,25 +30,25 @@ public class CloudStorageService {
         return cloudinary.uploader().upload(file.getBytes(), config);
     }
 
-    public Map uploadAudio(MultipartFile file, String directory) throws IOException {
-        String contentType = file.getContentType();
-        if(!contentType.startsWith("audio/"))
-            throw new AppException(StatusCode.UNCATEGORIZED);
-
-        Map<String, Object> config = new HashMap<>();
-        config.put("folder", directory);
-        config.put("resource_type", "video");
-        return cloudinary.uploader().upload(file.getBytes(), config);
-    }
-
-    public Map uploadVideo(MultipartFile file, String directory) throws IOException {
-        String contentType = file.getContentType();
-        if(!contentType.startsWith("video/"))
-            throw new AppException(StatusCode.UNCATEGORIZED);
-
-        Map<String, Object> config = new HashMap<>();
-        config.put("folder", directory);
-        config.put("resource_type", "video");
-        return cloudinary.uploader().upload(file.getBytes(), config);
-    }
+//    public Map uploadAudio(MultipartFile file, String directory) throws IOException {
+//        String contentType = file.getContentType();
+//        if(!contentType.startsWith("audio/"))
+//            throw new AppException(StatusCode.UNCATEGORIZED);
+//
+//        Map<String, Object> config = new HashMap<>();
+//        config.put("folder", directory);
+//        config.put("resource_type", "video");
+//        return cloudinary.uploader().upload(file.getBytes(), config);
+//    }
+//
+//    public Map uploadVideo(MultipartFile file, String directory) throws IOException {
+//        String contentType = file.getContentType();
+//        if(!contentType.startsWith("video/"))
+//            throw new AppException(StatusCode.UNCATEGORIZED);
+//
+//        Map<String, Object> config = new HashMap<>();
+//        config.put("folder", directory);
+//        config.put("resource_type", "video");
+//        return cloudinary.uploader().upload(file.getBytes(), config);
+//    }
 }

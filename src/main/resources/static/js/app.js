@@ -38,7 +38,7 @@ function connect() {
             log("Received!");
             message = JSON.parse(message.body);
             console.log(message);
-            showMessage(message.senderName + ": " + message.text);
+            showMessage(message.senderName + ": " + message.content);
         });
     }, function (error) {
         log("Connect error: " + error);
@@ -52,11 +52,34 @@ function disconnect() {
 }
 
 function sendMessage() {
-    const text = document.getElementById("messageInput").value;
-    const payload = { text: text };
+    const type = document.querySelector("input[name='messageType']:checked").value;
 
-    stompClient.send("/chat/1-2/send-message", {}, JSON.stringify(payload));
-    showMessage("You: " + text);
+    if (type === "TEXT") {
+        const text = document.getElementById("messageInput").value;
+        const payload = {
+            content: text,
+            type: "TEXT"
+        };
+        stompClient.send("/chat/1-2/send-message", {}, JSON.stringify(payload));
+        showMessage("You: " + text);
+    } else {
+        const file = document.getElementById("fileInput").files[0];
+        if (!file) {
+            alert("Please choose a file.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+            const base64 = reader.result;
+            const payload = {
+                content: base64,
+                type: type // "IMAGE" hoặc "AUDIO"
+            };
+            stompClient.send("/chat/1-2/send-message", {}, JSON.stringify(payload));
+        };
+        reader.readAsDataURL(file);
+    }
 }
 
 function showMessage(message) {

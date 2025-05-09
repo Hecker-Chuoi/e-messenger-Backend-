@@ -12,6 +12,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @RequiredArgsConstructor
@@ -19,6 +20,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     WebSocketAuthInterceptor authInterceptor;
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registry){
+        registry.setMessageSizeLimit(1024 * 1024 * 10);
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
