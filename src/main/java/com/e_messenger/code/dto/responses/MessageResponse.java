@@ -1,6 +1,6 @@
 package com.e_messenger.code.dto.responses;
 
-import com.e_messenger.code.entity.enums.MessageType;
+import com.e_messenger.code.entity.enums.GeneralType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,9 +16,10 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class MessageResponse {
     String content;
-    MessageType type;
+    GeneralType type;
     String senderId;
     String senderName;
+    String conversationId;
 
     LocalDateTime sentAt;
 }

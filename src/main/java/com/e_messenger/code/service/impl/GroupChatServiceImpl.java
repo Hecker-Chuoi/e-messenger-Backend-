@@ -17,9 +17,13 @@ import com.e_messenger.code.utils.ParticipantUtil;
 import com.e_messenger.code.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -50,7 +54,7 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public Conversation createGroupChat(GroupCreationRequest request) {
+    public Conversation createGroupChat(GroupCreationRequest request, Principal principal) {
         List<User> validUsers = userUtil.getValidUsers(request.getParticipantIds());
 
         if(validUsers.size() < 3)
@@ -58,7 +62,7 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         Conversation group = conversationMapper.toEntity(request);
 
-        if(!request.getParticipantIds().getFirst().equals(userService.getCurrentUser().getId())) {
+        if(!request.getParticipantIds().getFirst().equals(principal.getName())) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
 
@@ -70,19 +74,20 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    @PreAuthorize("@participantUtil.hasRole(@conversationQueryServiceImpl.getConversationById(#groupId), @userService.getCurrentUser(), T(com.e_messenger.code.entity.enums.ConversationRole).OWNER)")
-    public Conversation updateGroupInfo(String groupId, GroupUpdateRequest request) {
-        Conversation group = conversationRepo.findConversationById(groupId).orElseThrow(
-                () -> new AppException(StatusCode.UNCATEGORIZED)
-        );
+    public Conversation updateGroupInfo(String groupId, GroupUpdateRequest request, Principal principal) {
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
+
+        if(!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER))
+            throw new AppException(StatusCode.UNCATEGORIZED);
+
         conversationMapper.update(group, request);
         return conversationRepo.save(group);
     }
 
     @Override
-    public Conversation addParticipants(String groupId, List<String> participantIds) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = queryService.getConversationById(groupId, curUser.getId());
+    public Conversation addParticipants(String groupId, List<String> participantIds, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = queryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.hasManagementRole(group, curUser))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -102,9 +107,9 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public Conversation removeParticipants(String groupId, List<String> removeIds) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = queryService.getConversationById(groupId, curUser.getId());
+    public Conversation removeParticipants(String groupId, List<String> removeIds, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = queryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.canAffect(group, curUser, removeIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -119,9 +124,9 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public void deleteGroup(String groupId) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = conversationQueryService.getConversationById(groupId, curUser.getId());
+    public void deleteGroup(String groupId, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.hasRole(group, curUser, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -130,21 +135,21 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public Conversation setOwner(String groupId, String newOwnerId) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = conversationQueryService.getConversationById(groupId, curUser.getId());
+    public Conversation setOwner(String groupId, String newOwnerId, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.hasRole(group, curUser, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
-        participantUtil.changeOwner(group, userService.getCurrentUser().getId(), newOwnerId);
+        participantUtil.changeOwner(group, principal.getName(), newOwnerId);
         return conversationRepo.save(group);
     }
 
     @Override
-    public Conversation setCoOwner(String groupId, List<String> coOwnerIds) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = conversationQueryService.getConversationById(groupId, curUser.getId());
+    public Conversation setCoOwner(String groupId, List<String> coOwnerIds, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.hasRole(group, curUser, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -156,9 +161,9 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public Conversation toMember(String groupId, List<String> participantIds) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = conversationQueryService.getConversationById(groupId, curUser.getId());
+    public Conversation toMember(String groupId, List<String> participantIds, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
         if(!participantUtil.canAffect(group, curUser, participantIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -169,20 +174,19 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public boolean leaveConversation(String groupId) {
-        User curUser = userService.getCurrentUser();
-        Conversation group = queryService.getConversationById(groupId, curUser.getId());
+    public Conversation leaveConversation(String groupId, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
+        Conversation group = queryService.getConversationById(groupId, principal.getName());
 
         if(group.getParticipants().size() == 1)
             throw new AppException(StatusCode.UNCATEGORIZED);
-        if(participantUtil.getParticipantRole(group, curUser.getId()).equals(ConversationRole.OWNER))
+        if(participantUtil.getParticipantRole(group, principal.getName()).equals(ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         group.setParticipants(
-                removeAll(group.getParticipants(), List.of(curUser.getId()))
+                removeAll(group.getParticipants(), List.of(principal.getName()))
         );
 
-        conversationRepo.save(group);
-        return true;
+        return conversationRepo.save(group);
     }
 }

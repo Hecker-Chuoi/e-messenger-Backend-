@@ -3,16 +3,15 @@ package com.e_messenger.code.service.impl;
 import com.cloudinary.Cloudinary;
 import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.entity.Conversation;
-import com.e_messenger.code.entity.Message;
+import com.e_messenger.code.entity.message.Message;
 import com.e_messenger.code.entity.User;
-import com.e_messenger.code.entity.enums.MessageType;
+import com.e_messenger.code.entity.enums.GeneralType;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.repository.ConversationRepository;
 import com.e_messenger.code.repository.MessageRepository;
-import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,30 +39,26 @@ public class ChattingService {
 
     UserService userService;
     Cloudinary cloudinary;
-    NotificationService notificationService;
     ConversationQueryServiceImpl conversationQueryService;
 
-    public Message sendText(String conversationId, MessageRequest request, Principal principal){
+    public Message sendText(Conversation conv, MessageRequest request, Principal principal){
         User curUser = userService.getUserById(principal.getName());
-        Conversation conversation = conversationQueryService.getConversationById(conversationId, principal.getName());
 
         Message message = Message.builder()
                 .senderId(curUser.getId())
                 .senderName(curUser.getDisplayName())
-                .conversationId(conversationId)
+                .conversationId(conv.getId())
                 .sentAt(LocalDateTime.now())
                 .build();
 
         messageMapper.update(message, request);
-        conversationMapper.updateLastSentInfo(conversation, message);
+        conversationMapper.updateLastSentInfo(conv, message);
 
-        notificationService.notifyNewMessage(conversation, messageMapper.toResponse(message));
-
-        conversationRepo.save(conversation);
-        return mainRepo.save((message));
+        conversationRepo.save(conv);
+        return mainRepo.save(message);
     }
 
-    public Message sendFile(String conversationId, MessageRequest request, Principal principal) throws IOException {
+    public Message sendFile(Conversation conv, MessageRequest request, Principal principal) throws IOException {
         String[] encoded = request.getContent().split(";");
         String mimeType = encoded[0].split(":")[1];
         String base64 = encoded[1].split(",")[1];
@@ -76,12 +71,11 @@ public class ChattingService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         User curUser = userService.getUserById(principal.getName());
-        Conversation conversation = conversationQueryService.getConversationById(conversationId, principal.getName());
 
         byte[] fileBytes = Base64.getDecoder().decode(base64);
         Map config = new HashMap();
-        config.put("resource_type", MessageType.fromString(generalType).getUploadOption());
-        config.put("folder", "Conversation/%s".formatted(conversationId));
+        config.put("resource_type", GeneralType.fromString(generalType).getUploadOption());
+        config.put("folder", "Conversation/%s".formatted(conv.getId()));
 
         Map result = cloudinary.uploader().upload(fileBytes, config);
 
@@ -90,15 +84,13 @@ public class ChattingService {
                 .type(request.getType())
                 .senderId(curUser.getId())
                 .senderName(curUser.getDisplayName())
-                .conversationId(conversationId)
+                .conversationId(conv.getId())
                 .sentAt(LocalDateTime.now())
                 .build();
 
-        conversationMapper.updateLastSentInfo(conversation, message);
+        conversationMapper.updateLastSentInfo(conv, message);
 
-        notificationService.notifyNewMessage(conversation, messageMapper.toResponse(message));
-
-        conversationRepo.save(conversation);
+        conversationRepo.save(conv);
         return mainRepo.save((message));
     }
 

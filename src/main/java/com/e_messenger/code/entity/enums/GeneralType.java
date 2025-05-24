@@ -5,27 +5,17 @@ import com.e_messenger.code.exception.StatusCode;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum MessageType {
-    TEXT ("text"),
-    IMAGE ("image"),
-    AUDIO ("video");
-
-    final String uploadOption;
-
-    MessageType(String uploadOption) {
-        this.uploadOption = uploadOption;
-    }
-
-    public String getUploadOption() {
-        return uploadOption;
-    }
+public enum GeneralType {
+    TEXT,
+    MEDIA,
+    CONVERSATION;
 
     @JsonCreator
-    public static MessageType fromString(String text) {
+    public static GeneralType fromString(String text) {
         if(text.isBlank())
             throw new AppException(StatusCode.UNCATEGORIZED);
         try{
-            return MessageType.valueOf(text.toUpperCase());
+            return GeneralType.valueOf(text.toUpperCase());
         }
         catch(IllegalArgumentException e){
             throw new AppException(StatusCode.UNCATEGORIZED);

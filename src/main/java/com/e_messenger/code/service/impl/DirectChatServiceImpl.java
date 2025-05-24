@@ -6,6 +6,7 @@ import com.e_messenger.code.entity.User;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.repository.ConversationRepository;
+import com.e_messenger.code.repository.MessageRepository;
 import com.e_messenger.code.service.DirectChatService;
 import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,12 +23,12 @@ import java.security.Principal;
 public class DirectChatServiceImpl extends DirectChatService {
     ConversationRepository conversationRepo;
     UserService userService;
-    ParticipantUtil participantUtil;
     ConversationQueryServiceImpl queryService;
+    ParticipantUtil participantUtil;
 
     @Override
-    public Conversation createDirectChat(String otherId) {
-        User curUser = userService.getCurrentUser();
+    public Conversation createDirectChat(String otherId, Principal principal) {
+        User curUser = userService.getUserById(principal.getName());
         User other = userService.getUserByIdentifier(otherId);
 
         if(curUser.equals(other))
@@ -53,11 +54,11 @@ public class DirectChatServiceImpl extends DirectChatService {
     }
 
     @Override
-    public boolean leaveConversation(String conversationId) {
+    public Conversation leaveConversation(String conversationId, Principal principal) {
         Conversation direct = queryService.getConversationById(conversationId, userService.getCurrentUser().getId());
         if(direct.getType().equals(ConversationType.DIRECT)){
             conversationRepo.delete(direct);
-            return true;
+            return direct;
         }
         throw new AppException(StatusCode.UNCATEGORIZED);
     }

@@ -7,6 +7,8 @@ import com.e_messenger.code.utils.validation.PasswordValidation;
 import com.e_messenger.code.utils.validation.PhoneValidation;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,6 +32,7 @@ public class UserCreationRequest {
     @JsonDeserialize(using = LocalDateDeserializer.class)
     LocalDate dob;
     Gender gender;
+    @NotBlank
     String displayName;
     @EmailValidation
     String email;

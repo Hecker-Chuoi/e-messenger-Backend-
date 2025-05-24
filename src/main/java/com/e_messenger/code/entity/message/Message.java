@@ -1,6 +1,6 @@
-package com.e_messenger.code.entity;
+package com.e_messenger.code.entity.message;
 
-import com.e_messenger.code.entity.enums.MessageType;
+import com.e_messenger.code.entity.enums.GeneralType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,15 +13,12 @@ import java.time.LocalDateTime;
 @Document(collection = "messages")
 @Data
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
-public class Message {
+public abstract class Message {
     String content;
-    MessageType type;
-    String senderId;
-    String senderName;
+    GeneralType type;
+    String actorId;
+    String actorName;
     String conversationId;
-
-    LocalDateTime sentAt;
+    LocalDateTime time;
 }

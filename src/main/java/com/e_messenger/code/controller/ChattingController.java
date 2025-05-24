@@ -3,10 +3,13 @@ package com.e_messenger.code.controller;
 import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.MessageResponse;
-import com.e_messenger.code.entity.Message;
-import com.e_messenger.code.entity.enums.MessageType;
+import com.e_messenger.code.entity.Conversation;
+import com.e_messenger.code.entity.message.Message;
+import com.e_messenger.code.entity.enums.GeneralType;
 import com.e_messenger.code.mapstruct.MessageMapper;
+import com.e_messenger.code.service.ConversationQueryService;
 import com.e_messenger.code.service.impl.ChattingService;
+import com.e_messenger.code.service.impl.NotificationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +31,21 @@ import java.util.List;
 public class ChattingController {
     ChattingService mainService;
     MessageMapper messageMapper;
+    NotificationService notificationService;
+    ConversationQueryService conversationQueryService;
 
     @MessageMapping("/{conversationId}/send-message")
     public void sendMessage(@DestinationVariable String conversationId, @Payload MessageRequest request, Principal principal) throws IOException {
-        MessageType type = request.getType();
-        if(type.equals(MessageType.TEXT))
-            mainService.sendText(conversationId, request, principal);
+        GeneralType type = request.getType();
+        Message result = null;
+
+        Conversation conv = conversationQueryService.getConversationById(conversationId, principal.getName());
+        if(type.equals(GeneralType.TEXT))
+            result = mainService.sendText(conv, request, principal);
         else
-            mainService.sendFile(conversationId, request, principal);
+            result = mainService.sendFile(conv, request, principal);
+
+        notificationService.notifyNewMessage(conv.getParticipants(), result);
     }
 
     @GetMapping("/histories/{conversationId}")
