@@ -62,7 +62,7 @@ public class GroupChatController {
 
     @MessageMapping("/group/{groupId}/leave")
     public ApiResponse<String> leaveConversation(@DestinationVariable String groupId, Principal principal){
-        Conversation result = groupChatService.leaveConversation(groupId, principal);
+        Conversation result = groupChatService.leaveGroup(groupId, principal);
         return ApiResponse.<String>builder()
                 .result("Leave group successfully!")
                 .build();
@@ -70,7 +70,7 @@ public class GroupChatController {
 
     @MessageMapping("/group/{groupId}/delete")
     public ApiResponse deleteGroup(@DestinationVariable String groupId, Principal principal){
-        groupChatService.deleteGroup(groupId, principal);
+        groupChatService.deleteConversation(groupId, principal);
         return ApiResponse.builder()
                 .result("Group deleted successfully!")
                 .build();

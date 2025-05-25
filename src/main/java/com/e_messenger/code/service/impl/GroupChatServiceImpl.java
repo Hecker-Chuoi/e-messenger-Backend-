@@ -277,7 +277,7 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public Conversation leaveConversation(String groupId, Principal principal) {
+    public Conversation leaveGroup(String groupId, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
@@ -306,7 +306,7 @@ public class GroupChatServiceImpl extends GroupChatService {
     }
 
     @Override
-    public void deleteGroup(String groupId, Principal principal) {
+    public void deleteConversation(String groupId, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 

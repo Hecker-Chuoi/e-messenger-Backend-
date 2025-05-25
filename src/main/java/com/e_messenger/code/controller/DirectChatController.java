@@ -29,15 +29,11 @@ public class DirectChatController {
     @MessageMapping("/direct/create/{otherId}")
     public void createDirectChat(@DestinationVariable String otherId, Principal principal) {
         Conversation result = service.createDirectChat(otherId, principal);
-        notificationService.notifyNewConversation(
-                result.getParticipants(),
-                result
-        );
+
     }
 
     @MessageMapping("/direct/{conversationId}/delete")
     public void deleteConversation(@DestinationVariable String conversationId, Principal principal) {
-        Conversation result = service.leaveConversation(conversationId, principal);
-        notificationService.notifyDeleteConversation(result);
+        service.deleteConversation(conversationId, principal);
     }
 }

@@ -22,8 +22,11 @@ import java.security.Principal;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE, makeFinal = true)
 public class DirectChatServiceImpl extends DirectChatService {
     ConversationRepository conversationRepo;
+    MessageRepository messageRepo;
+
     UserService userService;
     ConversationQueryServiceImpl queryService;
+
     ParticipantUtil participantUtil;
 
     @Override
@@ -54,11 +57,10 @@ public class DirectChatServiceImpl extends DirectChatService {
     }
 
     @Override
-    public Conversation leaveConversation(String conversationId, Principal principal) {
+    public void deleteConversation(String conversationId, Principal principal) {
         Conversation direct = queryService.getConversationById(conversationId, userService.getCurrentUser().getId());
         if(direct.getType().equals(ConversationType.DIRECT)){
             conversationRepo.delete(direct);
-            return direct;
         }
         throw new AppException(StatusCode.UNCATEGORIZED);
     }
