@@ -1,6 +1,6 @@
 package com.e_messenger.code.entity.enums;
 
-public enum DetailConvNotiType {
+public enum DetailActionType {
     CREATE,
     LEAVE,
     DELETE,

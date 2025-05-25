@@ -1,11 +1,16 @@
 package com.e_messenger.code.service.impl;
 
 import com.cloudinary.Cloudinary;
-import com.e_messenger.code.dto.requests.MessageRequest;
+import com.e_messenger.code.dto.requests.message.MediaMessageRequest;
+import com.e_messenger.code.dto.requests.message.MessageRequest;
+import com.e_messenger.code.dto.requests.message.TextMessageRequest;
 import com.e_messenger.code.entity.Conversation;
+import com.e_messenger.code.entity.enums.MediaType;
+import com.e_messenger.code.entity.message.MediaMessage;
 import com.e_messenger.code.entity.message.Message;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.entity.enums.GeneralType;
+import com.e_messenger.code.entity.message.TextMessage;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.ConversationMapper;
@@ -19,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.io.IOException;
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -40,58 +46,52 @@ public class ChattingService {
     UserService userService;
     Cloudinary cloudinary;
     ConversationQueryServiceImpl conversationQueryService;
+    private final NotificationService notificationService;
 
-    public Message sendText(Conversation conv, MessageRequest request, Principal principal){
+    public Message sendText(String conversationId, TextMessageRequest request, Principal principal){
         User curUser = userService.getUserById(principal.getName());
+        Conversation conv = conversationQueryService.getConversationById(conversationId, principal.getName());
 
-        Message message = Message.builder()
-                .senderId(curUser.getId())
-                .senderName(curUser.getDisplayName())
-                .conversationId(conv.getId())
-                .sentAt(LocalDateTime.now())
+        TextMessage message = TextMessage.builder()
+                .content(request.getText())
+                .actorId(curUser.getId())
+                .actorName(curUser.getDisplayName())
+                .conversationId(conversationId)
+                .time(LocalDateTime.now())
                 .build();
 
-        messageMapper.update(message, request);
-        conversationMapper.updateLastSentInfo(conv, message);
+        conversationMapper.updateLastSentInfo(conv, message); // for display purpose
 
         conversationRepo.save(conv);
-        return mainRepo.save(message);
+        message = mainRepo.save(message);
+
+        notificationService.notifyNewMessage(conv, message);
+
+        return message;
     }
 
-    public Message sendFile(Conversation conv, MessageRequest request, Principal principal) throws IOException {
-        String[] encoded = request.getContent().split(";");
-        String mimeType = encoded[0].split(":")[1];
-        String base64 = encoded[1].split(",")[1];
-
-        String generalType = mimeType.split("/")[0];
-        String specificType = mimeType.split("/")[1];
-        System.out.println(generalType + " " + specificType);
-
-        if(!generalType.toUpperCase().equals(request.getType().toString()))
-            throw new AppException(StatusCode.UNCATEGORIZED);
-
+    public Message sendFile(String conversationId, MediaMessageRequest request, Principal principal) throws IOException {
         User curUser = userService.getUserById(principal.getName());
+        Conversation conv = conversationQueryService.getConversationById(conversationId, principal.getName());
 
-        byte[] fileBytes = Base64.getDecoder().decode(base64);
-        Map config = new HashMap();
-        config.put("resource_type", GeneralType.fromString(generalType).getUploadOption());
-        config.put("folder", "Conversation/%s".formatted(conv.getId()));
-
-        Map result = cloudinary.uploader().upload(fileBytes, config);
-
-        Message message = Message.builder()
-                .content(result.get("url").toString())
-                .type(request.getType())
-                .senderId(curUser.getId())
-                .senderName(curUser.getDisplayName())
+        MediaMessage message = MediaMessage.builder()
+                .content(request.getMediaType().equals(MediaType.IMAGE) ? "Image" : "Audio")
+                .mediaType(request.getMediaType())
+                .url(request.getUploadedUrl())
+                .actorId(curUser.getId())
+                .actorName(curUser.getDisplayName())
                 .conversationId(conv.getId())
-                .sentAt(LocalDateTime.now())
+                .time(LocalDateTime.now())
                 .build();
 
         conversationMapper.updateLastSentInfo(conv, message);
 
         conversationRepo.save(conv);
-        return mainRepo.save((message));
+        message = mainRepo.save(message);
+
+        notificationService.notifyNewMessage(conv, message);
+
+        return message;
     }
 
     public List<Message> getMessageHistory(String conversationId, int pageNum, int pageSize){

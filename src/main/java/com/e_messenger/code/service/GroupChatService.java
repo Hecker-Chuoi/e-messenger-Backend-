@@ -1,9 +1,8 @@
 package com.e_messenger.code.service;
 
-import com.e_messenger.code.dto.requests.GroupCreationRequest;
-import com.e_messenger.code.dto.requests.GroupUpdateRequest;
+import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
+import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
 import com.e_messenger.code.entity.Conversation;
-import com.e_messenger.code.entity.User;
 
 import java.security.Principal;
 import java.util.List;

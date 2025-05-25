@@ -10,16 +10,12 @@ import lombok.experimental.FieldDefaults;
 import java.time.LocalDateTime;
 
 @Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class MessageResponse {
     String content;
-    GeneralType type;
-    String senderId;
-    String senderName;
+    String actorId;
+    String actorName;
     String conversationId;
-
-    LocalDateTime sentAt;
+    LocalDateTime time;
+    GeneralType type;
 }

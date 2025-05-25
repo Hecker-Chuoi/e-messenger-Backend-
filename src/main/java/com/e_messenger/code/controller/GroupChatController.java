@@ -1,7 +1,7 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.GroupCreationRequest;
-import com.e_messenger.code.dto.requests.GroupUpdateRequest;
+import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
+import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;

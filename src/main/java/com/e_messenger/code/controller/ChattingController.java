@@ -1,11 +1,15 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.MessageRequest;
+import com.e_messenger.code.dto.requests.message.MediaMessageRequest;
+import com.e_messenger.code.dto.requests.message.MessageRequest;
+import com.e_messenger.code.dto.requests.message.TextMessageRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.MessageResponse;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.message.Message;
 import com.e_messenger.code.entity.enums.GeneralType;
+import com.e_messenger.code.exception.AppException;
+import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.service.ConversationQueryService;
 import com.e_messenger.code.service.impl.ChattingService;
@@ -34,18 +38,24 @@ public class ChattingController {
     NotificationService notificationService;
     ConversationQueryService conversationQueryService;
 
-    @MessageMapping("/{conversationId}/send-message")
-    public void sendMessage(@DestinationVariable String conversationId, @Payload MessageRequest request, Principal principal) throws IOException {
-        GeneralType type = request.getType();
+    @MessageMapping("/{conversationId}/send-text")
+    public <T extends TextMessageRequest> void sendMessage(@DestinationVariable String conversationId, @Payload T request, Principal principal) throws IOException {
         Message result = null;
 
-        Conversation conv = conversationQueryService.getConversationById(conversationId, principal.getName());
-        if(type.equals(GeneralType.TEXT))
-            result = mainService.sendText(conv, request, principal);
-        else
-            result = mainService.sendFile(conv, request, principal);
+        if(!request.getType().equals(GeneralType.TEXT))
+            throw new AppException(StatusCode.UNCATEGORIZED);
 
-        notificationService.notifyNewMessage(conv.getParticipants(), result);
+        result = mainService.sendText(conversationId, request, principal);
+    }
+
+    @MessageMapping("/{conversationId}/send-text")
+    public <T extends MediaMessageRequest> void sendMessage(@DestinationVariable String conversationId, @Payload T request, Principal principal) throws IOException {
+        Message result = null;
+
+        if(!request.getType().equals(GeneralType.MEDIA))
+            throw new AppException(StatusCode.UNCATEGORIZED);
+
+        result = mainService.sendFile(conversationId, request, principal);
     }
 
     @GetMapping("/histories/{conversationId}")

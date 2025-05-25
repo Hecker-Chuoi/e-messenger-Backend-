@@ -1,6 +1,5 @@
 package com.e_messenger.code.service;
 
-import com.e_messenger.code.dto.requests.MessageRequest;
 import com.e_messenger.code.entity.Conversation;
 
 import java.security.Principal;

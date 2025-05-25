@@ -1,6 +1,7 @@
 package com.e_messenger.code.service.impl;
 
 import com.e_messenger.code.entity.Conversation;
+import com.e_messenger.code.entity.message.ConversationNotification;
 import com.e_messenger.code.entity.message.Message;
 import com.e_messenger.code.entity.Participant;
 import com.e_messenger.code.mapstruct.ConversationMapper;
@@ -21,66 +22,27 @@ public class NotificationService {
     ConversationMapper conversationMapper;
     MessageMapper messageMapper;
 
-    public void notifyNewMessage(List<Participant> participants, Message message) {
-        for(Participant participant : participants) {
+    public void notifyNewMessage(Conversation conv, Message message) {
+        for(Participant participant : conv.getParticipants()) {
             messagingTemplate.convertAndSendToUser(
                     participant.getParticipantId(),
-                    "/queue/messages",
-                    messageMapper.toResponse(message)
+                    "/messages",
+                    message
             );
         }
     }
 
-    public void notifyConversationUpdate(Conversation conversation) {
-
+    public void notifyConversationUpdate(Conversation conv, ConversationNotification message) {
+        for(Participant participant : conv.getParticipants()) {
+            messagingTemplate.convertAndSendToUser(
+                    participant.getParticipantId(),
+                    "/conversations",
+                    message
+            );
+        }
     }
 
     public void notifyGeneralNotifications() {
 
-    }
-
-    // new direct chat
-    // someone left chat
-
-    // new group chat
-    // change conversation's info (name, image)
-    // change role
-        // any -> owner
-        // member -> co owner
-        // co owner -> member
-    // change participants
-        // add participants
-        // remove participants
-    // someone left group
-    // owner delete group
-
-    public void notifyNewConversation(List<Participant> participants, Conversation conversation) {
-        for(Participant participant : participants) {
-            messagingTemplate.convertAndSendToUser(
-                    participant.getParticipantId(),
-                    "/queue/conversations",
-                    conversationMapper.toResponse(conversation)
-            );
-        }
-    }
-
-    public void notifyDeleteConversation(Conversation conversation) {
-        for(Participant participant : conversation.getParticipants()) {
-            messagingTemplate.convertAndSendToUser(
-                    participant.getParticipantId(),
-                    "/queue/conversations",
-                    conversationMapper.toResponse(conversation)
-            );
-        }
-    }
-
-    public void notifyUpdateConversation(Conversation conversation) {
-        for (Participant participant : conversation.getParticipants()) {
-            messagingTemplate.convertAndSendToUser(
-                    participant.getParticipantId(),
-                    "/queue/conversations",
-                    ""
-            );
-        }
     }
 }

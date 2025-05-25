@@ -1,20 +1,18 @@
-package com.e_messenger.code.entity.message;
+package com.e_messenger.code.dto.requests.message;
 
 import com.e_messenger.code.entity.enums.GeneralType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@TypeAlias("textMessage")
-public class TextMessage extends Message{
+public class TextMessageRequest extends MessageRequest {
+    String text;
 
-    @Override
-    public GeneralType getType() {
-        return GeneralType.TEXT;
-    }
+    @Setter(AccessLevel.NONE)
+    @Builder.Default
+    final GeneralType type = GeneralType.TEXT;
 }

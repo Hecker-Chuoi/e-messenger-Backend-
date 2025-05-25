@@ -1,8 +1,8 @@
 package com.e_messenger.code.service.impl;
 
-import com.e_messenger.code.dto.requests.PasswordChangeRequest;
-import com.e_messenger.code.dto.requests.UserCreationRequest;
-import com.e_messenger.code.dto.requests.UserUpdateRequest;
+import com.e_messenger.code.dto.requests.user.PasswordChangeRequest;
+import com.e_messenger.code.dto.requests.user.UserCreationRequest;
+import com.e_messenger.code.dto.requests.user.UserUpdateRequest;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.entity.enums.Gender;
 import com.e_messenger.code.exception.AppException;

@@ -1,7 +1,7 @@
 package com.e_messenger.code.mapstruct;
 
-import com.e_messenger.code.dto.requests.UserCreationRequest;
-import com.e_messenger.code.dto.requests.UserUpdateRequest;
+import com.e_messenger.code.dto.requests.user.UserCreationRequest;
+import com.e_messenger.code.dto.requests.user.UserUpdateRequest;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import org.mapstruct.*;

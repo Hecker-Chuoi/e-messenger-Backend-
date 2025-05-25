@@ -1,15 +1,23 @@
 package com.e_messenger.code.entity.message;
 
-import com.e_messenger.code.entity.enums.DetailConvNotiType;
+import com.e_messenger.code.entity.enums.DetailActionType;
 import com.e_messenger.code.entity.enums.GeneralType;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
-
+@Data
+@SuperBuilder
+@EqualsAndHashCode(callSuper = true)
+@FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public abstract class ConversationNotification extends Message {
-    DetailConvNotiType detailType;
+    @Builder.ObtainVia(method = "getActionType", isStatic = false)
+    DetailActionType actionType;
 
-    public ConversationNotification(String content, String actorId, String actorName, String conversationId, LocalDateTime time, DetailConvNotiType detailType) {
-        super(content, GeneralType.CONVERSATION, actorId, actorName, conversationId, time);
-        this.detailType = detailType;
+    @Override
+    public GeneralType getType() {
+        return GeneralType.CONVERSATION;
     }
+
+    public abstract DetailActionType getActionType();
 }

@@ -1,4 +1,4 @@
-package com.e_messenger.code.dto.requests;
+package com.e_messenger.code.dto.requests.conv;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

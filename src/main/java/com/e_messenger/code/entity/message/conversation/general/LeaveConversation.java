@@ -1,21 +1,22 @@
 package com.e_messenger.code.entity.message.conversation.general;
 
-import com.e_messenger.code.entity.enums.DetailConvNotiType;
-import com.e_messenger.code.entity.enums.GeneralType;
+import com.e_messenger.code.entity.enums.DetailActionType;
 import com.e_messenger.code.entity.message.ConversationNotification;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.TypeAlias;
 
-import java.time.LocalDateTime;
-
 @Data
-@Builder
+@SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("leaveConversation")
 public class LeaveConversation extends ConversationNotification {
-    public LeaveConversation(String actorId, String actorName, String conversationId, LocalDateTime time) {
-        super("%s has left conversation".formatted(actorName), actorId, actorName, conversationId, time, DetailConvNotiType.LEAVE);
+
+    @Builder.Default
+    String content = "Someone has left the conversation";
+
+    @Override
+    public DetailActionType getActionType() {
+        return DetailActionType.LEAVE;
     }
 }
