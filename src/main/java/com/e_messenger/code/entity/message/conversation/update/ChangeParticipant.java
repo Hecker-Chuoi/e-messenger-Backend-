@@ -18,12 +18,12 @@ public class ChangeParticipant extends ConversationNotification {
     @Builder.Default
     String content = "Participants updated";
 
-    enum Method{
+    public enum Method{
         ADD, REMOVE
     }
 
     Method method;
-    List<Participant> affectedParticipants;
+    List<String> affectedParticipants;
 
     @Override
     public DetailActionType getActionType() {

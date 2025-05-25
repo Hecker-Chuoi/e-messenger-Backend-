@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class GroupChatService extends ConversationService{
     abstract public Conversation createGroupChat(GroupCreationRequest request, Principal principal);
-    abstract public Conversation updateGroupInfo(String groupId, GroupUpdateRequest request, Principal principal);
+    abstract public Conversation changeName(String groupId, String newName, Principal principal);
     abstract public Conversation addParticipants(String groupId, List<String> participantIds, Principal principal);
     abstract public Conversation removeParticipants(String groupId, List<String> participantIds, Principal principal);
     abstract public void deleteGroup(String groupId, Principal principal);

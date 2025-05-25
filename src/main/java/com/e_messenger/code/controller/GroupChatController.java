@@ -7,7 +7,6 @@ import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.service.impl.GroupChatServiceImpl;
-import com.e_messenger.code.service.impl.NotificationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ import java.util.List;
 public class GroupChatController {
     GroupChatServiceImpl groupChatService;
     ConversationMapper conversationMapper;
-    NotificationService notificationService;
 
     @MessageMapping("/group/create")
     public ApiResponse<ConversationResponse> createGroupChat(@Payload GroupCreationRequest request, Principal principal){
@@ -39,8 +37,8 @@ public class GroupChatController {
     }
 
     @MessageMapping("/group/{groupId}/update")
-    public ApiResponse<ConversationResponse> updateGroupInfo(@DestinationVariable String groupId, @Payload GroupUpdateRequest request, Principal principal){
-        Conversation result = groupChatService.updateGroupInfo(groupId, request, principal);
+    public ApiResponse<ConversationResponse> updateGroupInfo(@DestinationVariable String groupId, @Payload String newName, Principal principal){
+        Conversation result = groupChatService.changeName(groupId, newName, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();

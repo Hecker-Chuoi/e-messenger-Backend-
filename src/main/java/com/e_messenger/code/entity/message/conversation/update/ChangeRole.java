@@ -17,7 +17,7 @@ import java.util.List;
 public class ChangeRole extends ConversationNotification {
     ConversationRole fromRole;
     ConversationRole toRole;
-    List<Participant> affectedParticipants;
+    List<String> affectedParticipants;
 
     @Builder.Default
     String content = "Participants's role has been changed";
