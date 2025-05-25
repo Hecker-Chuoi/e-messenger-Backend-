@@ -88,10 +88,10 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .time(LocalDateTime.now())
                 .build();
 
-        group =  conversationRepo.save(group);
         messageRepo.save(message);
 
         conversationMapper.updateLastSentInfo(group, message);
+        group =  conversationRepo.save(group);
 
         return group;
     }
@@ -114,10 +114,11 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .build();
 
         group.setConversationName(newName);
+
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -152,8 +153,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -183,8 +184,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -211,8 +212,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -241,8 +242,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -270,8 +271,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }
@@ -299,8 +300,8 @@ public class GroupChatServiceImpl extends GroupChatService {
 
         messageRepo.save(message);
 
-        conversationRepo.save(group);
         conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
 
         return group;
     }

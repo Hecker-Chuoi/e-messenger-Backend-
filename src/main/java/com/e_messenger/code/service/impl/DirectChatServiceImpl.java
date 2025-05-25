@@ -3,8 +3,11 @@ package com.e_messenger.code.service.impl;
 import com.e_messenger.code.entity.enums.ConversationType;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.entity.message.conversation.general.ConversationCreation;
+import com.e_messenger.code.entity.message.conversation.general.ConversationDeletion;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
+import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.repository.ConversationRepository;
 import com.e_messenger.code.repository.MessageRepository;
 import com.e_messenger.code.service.DirectChatService;
@@ -16,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -29,12 +33,14 @@ public class DirectChatServiceImpl extends DirectChatService {
 
     ParticipantUtil participantUtil;
 
+    ConversationMapper conversationMapper;
+
     @Override
     public Conversation createDirectChat(String otherId, Principal principal) {
-        User curUser = userService.getUserById(principal.getName());
+        User actor = userService.getUserById(principal.getName());
         User other = userService.getUserByIdentifier(otherId);
 
-        if(curUser.equals(other))
+        if(actor.equals(other))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         try{
@@ -47,19 +53,42 @@ public class DirectChatServiceImpl extends DirectChatService {
             }
         }
 
-        Conversation newDirect = Conversation.builder()
-                .id(ConversationQueryServiceImpl.getDirectChatId(curUser, other))
+        Conversation direct = Conversation.builder()
+                .id(ConversationQueryServiceImpl.getDirectChatId(actor, other))
                 .type(ConversationType.DIRECT)
-                .participants(participantUtil.toDirectParticipants(curUser, other))
+                .participants(participantUtil.toDirectParticipants(actor, other))
                 .build();
 
-        return conversationRepo.save(newDirect);
+        ConversationCreation message = ConversationCreation.builder()
+                .name(direct.getConversationName())
+                .actorId(actor.getId())
+                .actorName(actor.getDisplayName())
+                .conversationId(direct.getId())
+                .time(LocalDateTime.now())
+                .build();
+
+        messageRepo.save(message);
+
+        conversationMapper.updateLastSentInfo(direct, message);
+        conversationRepo.save(direct);
+
+        return direct;
     }
 
     @Override
     public void deleteConversation(String conversationId, Principal principal) {
+        User actor = userService.getUserById(principal.getName());
         Conversation direct = queryService.getConversationById(conversationId, userService.getCurrentUser().getId());
+
         if(direct.getType().equals(ConversationType.DIRECT)){
+            ConversationDeletion message = ConversationDeletion.builder()
+                .name(direct.getConversationName())
+                .actorId(actor.getId())
+                .actorName(actor.getDisplayName())
+                .conversationId(direct.getId())
+                .time(LocalDateTime.now())
+                .build();
+
             conversationRepo.delete(direct);
         }
         throw new AppException(StatusCode.UNCATEGORIZED);
