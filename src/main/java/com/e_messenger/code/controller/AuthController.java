@@ -1,6 +1,6 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.AuthRequest;
+import com.e_messenger.code.dto.requests.user.AuthRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.AuthResponse;
 import com.e_messenger.code.service.impl.AuthService;

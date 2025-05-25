@@ -1,7 +1,7 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.GroupCreationRequest;
-import com.e_messenger.code.dto.requests.GroupUpdateRequest;
+import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
+import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;
@@ -11,8 +11,12 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -24,73 +28,73 @@ public class GroupChatController {
     GroupChatServiceImpl groupChatService;
     ConversationMapper conversationMapper;
 
-    @PostMapping
-    public ApiResponse<ConversationResponse> createGroupChat(@RequestBody GroupCreationRequest request){
-        Conversation result = groupChatService.createGroupChat(request);
+    @MessageMapping("/group/create")
+    public ApiResponse<ConversationResponse> createGroupChat(@Payload GroupCreationRequest request, Principal principal){
+        Conversation result = groupChatService.createGroupChat(request, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @PutMapping("/{groupId}")
-    public ApiResponse<ConversationResponse> updateGroupInfo(@PathVariable String groupId, @RequestBody GroupUpdateRequest request){
-        Conversation result = groupChatService.updateGroupInfo(groupId, request);
+    @MessageMapping("/group/{groupId}/update")
+    public ApiResponse<ConversationResponse> updateGroupInfo(@DestinationVariable String groupId, @Payload String newName, Principal principal){
+        Conversation result = groupChatService.changeName(groupId, newName, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @PutMapping("/{groupId}/participants/add")
-    public ApiResponse<ConversationResponse> addParticipants(@PathVariable String groupId, @RequestBody List<String> participantIds){
-        Conversation result = groupChatService.addParticipants(groupId, participantIds);
+    @MessageMapping("/group/{groupId}/participants/add")
+    public ApiResponse<ConversationResponse> addParticipants(@DestinationVariable String groupId, @Payload List<String> participantIds, Principal principal){
+        Conversation result = groupChatService.addParticipants(groupId, participantIds, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @PutMapping("/{groupId}/participants/remove")
-    public ApiResponse<ConversationResponse> removeParticipants(@PathVariable String groupId, @RequestBody List<String> participantIds){
-        Conversation result = groupChatService.removeParticipants(groupId, participantIds);
+    @MessageMapping("/group/{groupId}/participants/remove")
+    public ApiResponse<ConversationResponse> removeParticipants(@DestinationVariable String groupId, @Payload List<String> participantIds, Principal principal){
+        Conversation result = groupChatService.removeParticipants(groupId, participantIds, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @DeleteMapping("/{groupId}/leave")
-    public ApiResponse<String> leaveConversation(@PathVariable String groupId){
-        boolean result = groupChatService.leaveConversation(groupId);
+    @MessageMapping("/group/{groupId}/leave")
+    public ApiResponse<String> leaveConversation(@DestinationVariable String groupId, Principal principal){
+        Conversation result = groupChatService.leaveGroup(groupId, principal);
         return ApiResponse.<String>builder()
                 .result("Leave group successfully!")
                 .build();
     }
 
-    @DeleteMapping("/{groupId}")
-    public ApiResponse deleteGroup(@PathVariable String groupId){
-        groupChatService.deleteGroup(groupId);
+    @MessageMapping("/group/{groupId}/delete")
+    public ApiResponse deleteGroup(@DestinationVariable String groupId, Principal principal){
+        groupChatService.deleteConversation(groupId, principal);
         return ApiResponse.builder()
                 .result("Group deleted successfully!")
                 .build();
     }
 
-    @PutMapping("/{groupId}/set-owner")
-    public ApiResponse<ConversationResponse> setOwner(@PathVariable String groupId, @RequestParam String ownerId){
-        Conversation result = groupChatService.setOwner(groupId, ownerId);
+    @MessageMapping("/group/{groupId}/participants/set-owner/{newOwnerId}")
+    public ApiResponse<ConversationResponse> setOwner(@DestinationVariable String groupId, @DestinationVariable String newOwnerId, Principal principal){
+        Conversation result = groupChatService.setOwner(groupId, newOwnerId, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @PutMapping("/{groupId}/set-coOwner")
-    public ApiResponse<ConversationResponse> setCoOwner(@PathVariable String groupId, @RequestBody List<String> coOwnerIds){
-        Conversation result = groupChatService.setCoOwner(groupId, coOwnerIds);
+    @MessageMapping("/group/{groupId}/participants/set-co-owner")
+    public ApiResponse<ConversationResponse> setCoOwner(@DestinationVariable String groupId, @Payload List<String> coOwnerIds, Principal principal){
+        Conversation result = groupChatService.setCoOwner(groupId, coOwnerIds, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
-    @PutMapping("/{groupId}/set-member")
-    public ApiResponse<ConversationResponse> toMember(@PathVariable String groupId, @RequestBody List<String> participantIds){
-        Conversation result = groupChatService.toMember(groupId, participantIds);
+    @MessageMapping("/group/{groupId}/participants/set-member")
+    public ApiResponse<ConversationResponse> toMember(@DestinationVariable String groupId, @Payload List<String> participantIds, Principal principal){
+        Conversation result = groupChatService.toMember(groupId, participantIds, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();

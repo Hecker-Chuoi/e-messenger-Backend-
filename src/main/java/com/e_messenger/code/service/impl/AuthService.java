@@ -1,6 +1,6 @@
 package com.e_messenger.code.service.impl;
 
-import com.e_messenger.code.dto.requests.AuthRequest;
+import com.e_messenger.code.dto.requests.user.AuthRequest;
 import com.e_messenger.code.dto.responses.AuthResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.exception.AppException;

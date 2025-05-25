@@ -1,4 +1,4 @@
-package com.e_messenger.code.dto.requests;
+package com.e_messenger.code.dto.requests.user;
 
 import com.e_messenger.code.entity.enums.Gender;
 import com.e_messenger.code.utils.jackson.deserializer.LocalDateDeserializer;

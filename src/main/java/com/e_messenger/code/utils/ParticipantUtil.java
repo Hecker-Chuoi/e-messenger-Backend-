@@ -103,7 +103,7 @@ public class ParticipantUtil {
     public void changeOwner(Conversation group, String oldOwnerId, String newOwnerId){
         for(Participant x : group.getParticipants()){
             if(x.getParticipantId().equals(oldOwnerId) && x.getRole().equals(ConversationRole.OWNER)){
-                x.setRole(ConversationRole.CO_OWNER);
+                x.setRole(ConversationRole.MEMBER);
             }
             if(x.getParticipantId().equals(newOwnerId)){
                 x.setRole(ConversationRole.OWNER);

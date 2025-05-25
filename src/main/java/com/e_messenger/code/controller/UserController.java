@@ -1,8 +1,8 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.PasswordChangeRequest;
-import com.e_messenger.code.dto.requests.UserCreationRequest;
-import com.e_messenger.code.dto.requests.UserUpdateRequest;
+import com.e_messenger.code.dto.requests.user.PasswordChangeRequest;
+import com.e_messenger.code.dto.requests.user.UserCreationRequest;
+import com.e_messenger.code.dto.requests.user.UserUpdateRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;

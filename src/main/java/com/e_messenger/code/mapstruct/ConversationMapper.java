@@ -1,10 +1,10 @@
 package com.e_messenger.code.mapstruct;
 
-import com.e_messenger.code.dto.requests.GroupCreationRequest;
-import com.e_messenger.code.dto.requests.GroupUpdateRequest;
+import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
+import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
 import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;
-import com.e_messenger.code.entity.Message;
+import com.e_messenger.code.entity.message.Message;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -22,10 +22,10 @@ public interface ConversationMapper {
     @Mapping(target = "conversationName", source = "groupName")
     void update(@MappingTarget Conversation conversation, GroupUpdateRequest request);
 
-    @Mapping(target = "lastMessage", source = "content")
-    @Mapping(target = "lastSenderName", source = "senderName")
-    @Mapping(target = "lastMessageTime", source = "sentAt")
-    @Mapping(target = "lastSenderId", source = "senderId")
     @Mapping(target = "type", ignore = true)
+    @Mapping(target = "lastMessage", source = "content")
+    @Mapping(target = "lastSenderId", source = "actorId")
+    @Mapping(target = "lastMessageTime", source = "time")
+    @Mapping(target = "lastSenderName", source = "actorName")
     void updateLastSentInfo(@MappingTarget Conversation conversation, Message lastMessage);
 }
