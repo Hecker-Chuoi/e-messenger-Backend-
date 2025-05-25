@@ -34,6 +34,7 @@ public class DirectChatServiceImpl extends DirectChatService {
     ParticipantUtil participantUtil;
 
     ConversationMapper conversationMapper;
+    NotificationService notificationService;
 
     @Override
     public Conversation createDirectChat(String otherId, Principal principal) {
@@ -72,6 +73,8 @@ public class DirectChatServiceImpl extends DirectChatService {
         conversationMapper.updateLastSentInfo(direct, message);
         conversationRepo.save(direct);
 
+        notificationService.notifyConversationUpdate(direct, message);
+
         return direct;
     }
 
@@ -90,6 +93,8 @@ public class DirectChatServiceImpl extends DirectChatService {
                 .build();
 
             conversationRepo.delete(direct);
+
+            notificationService.notifyConversationUpdate(direct, message);
         }
         throw new AppException(StatusCode.UNCATEGORIZED);
     }

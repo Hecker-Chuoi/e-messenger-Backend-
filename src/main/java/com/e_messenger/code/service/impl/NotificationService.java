@@ -42,7 +42,7 @@ public class NotificationService {
         }
     }
 
-    public void notifyGeneralNotifications() {
-
-    }
+//    public void notifyGeneralNotifications() {
+//
+//    }
 }

@@ -40,6 +40,7 @@ import java.util.UUID;
 public class GroupChatServiceImpl extends GroupChatService {
     UserService userService;
     ConversationQueryService queryService;
+    NotificationService notificationService;
     ConversationQueryService conversationQueryService;
 
     ConversationRepository conversationRepo;
@@ -93,6 +94,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         group =  conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -120,6 +122,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -156,6 +159,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -187,6 +191,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -215,6 +220,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -245,6 +251,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -274,6 +281,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -303,6 +311,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationMapper.updateLastSentInfo(group, message);
         conversationRepo.save(group);
 
+        notificationService.notifyConversationUpdate(group, message);
         return group;
     }
 
@@ -322,6 +331,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .time(LocalDateTime.now())
                 .build();
 
+        notificationService.notifyConversationUpdate(group, message);
         conversationRepo.delete(group);
     }
 }
