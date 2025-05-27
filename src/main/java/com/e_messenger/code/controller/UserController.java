@@ -84,5 +84,13 @@ public class UserController {
                 .build();
     }
 
+    @SecurityRequirement(name = "user token")
+    @PutMapping("/fcm-token")
+    public ApiResponse<UserResponse> updateFcmToken(@RequestBody String newToken){
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(service.updateFcmToken(newToken)))
+                .build();
+    }
+
 //delete
 }

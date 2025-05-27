@@ -113,4 +113,10 @@ public class UserService {
         userRepo.save(user);
         return "Password changed successfully!";
     }
+
+    public User updateFcmToken(String newToken){
+        User user = getCurrentUser();
+        user.setFcmToken(newToken);
+        return user;
+    }
 }

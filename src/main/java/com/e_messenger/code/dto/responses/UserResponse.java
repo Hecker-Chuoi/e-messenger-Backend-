@@ -32,4 +32,7 @@ public class UserResponse {
 //    ActiveStatus activeStatus;
     String bio;
     Instant updatedAt;
+
+    // thông tin hỗ trợ FE
+    String fcmToken;
 }

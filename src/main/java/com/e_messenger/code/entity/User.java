@@ -44,4 +44,7 @@ public class User {
     // Account is deleted
     @Builder.Default
     Boolean isDeleted = false;
+
+    // thông tin hỗ trợ FE
+    String fcmToken;
 }
