@@ -15,9 +15,6 @@ import java.util.List;
 @TypeAlias("changeParticipant")
 public class ChangeParticipant extends ConversationNotification {
 
-    @Builder.Default
-    String content = "Participants updated";
-
     public enum Method{
         ADD, REMOVE
     }

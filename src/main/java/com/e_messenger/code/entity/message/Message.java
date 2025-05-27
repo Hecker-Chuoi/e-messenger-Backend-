@@ -16,6 +16,7 @@ public abstract class Message {
     String content;
     String actorId;
     String actorName;
+    String actorAvatarUrl;
     String conversationId;
     LocalDateTime time;
 

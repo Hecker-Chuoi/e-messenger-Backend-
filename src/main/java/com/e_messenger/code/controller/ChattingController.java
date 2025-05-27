@@ -48,7 +48,7 @@ public class ChattingController {
         result = mainService.sendText(conversationId, request, principal);
     }
 
-    @MessageMapping("/{conversationId}/send-text")
+    @MessageMapping("/{conversationId}/send-media")
     public <T extends MediaMessageRequest> void sendMessage(@DestinationVariable String conversationId, @Payload T request, Principal principal) throws IOException {
         Message result = null;
 

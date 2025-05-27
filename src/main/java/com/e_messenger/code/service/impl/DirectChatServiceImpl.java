@@ -61,6 +61,7 @@ public class DirectChatServiceImpl extends DirectChatService {
                 .build();
 
         ConversationCreation message = ConversationCreation.builder()
+                .content("Conversation created")
                 .name(direct.getConversationName())
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
@@ -85,6 +86,7 @@ public class DirectChatServiceImpl extends DirectChatService {
 
         if(direct.getType().equals(ConversationType.DIRECT)){
             ConversationDeletion message = ConversationDeletion.builder()
+                .content("Conversation deleted")
                 .name(direct.getConversationName())
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())

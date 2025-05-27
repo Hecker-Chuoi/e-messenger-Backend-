@@ -40,7 +40,8 @@ public class WebSecurityConfig {
             "/static/**",
             "/resources/**",
             "/js/**",
-            "/upload/**"
+            "/upload/**",
+            "/test/**"
     };
 
     String[] USER_ENDPOINTS = {

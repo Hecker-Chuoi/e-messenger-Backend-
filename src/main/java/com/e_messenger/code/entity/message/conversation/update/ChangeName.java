@@ -14,9 +14,6 @@ public class ChangeName extends ConversationNotification {
     String oldName;
     String newName;
 
-    @Builder.Default
-    String content = "Conversation's name has changed";
-
     @Override
     public DetailActionType getActionType() {
         return DetailActionType.CHANGE_NAME;

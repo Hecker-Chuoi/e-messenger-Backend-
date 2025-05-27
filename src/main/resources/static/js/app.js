@@ -34,7 +34,17 @@ function connect() {
 
     stompClient.connect(headers, function (frame) {
         log("Connected: " + frame);
-        stompClient.subscribe("/user/queue/messages", function (message) {
+
+        stompClient.subscribe("/user/messages", function (message) {
+            // tin nhắn trong cuộc hội thoại
+            log("Received!");
+            message = JSON.parse(message.body);
+            console.log(message);
+            showMessage(message.senderName + ": " + message.content);
+        });
+
+        stompClient.subscribe("/user/conversations", function (message) {
+            // những thay đổi, cập nhật trong cuộc hội thoại
             log("Received!");
             message = JSON.parse(message.body);
             console.log(message);

@@ -13,9 +13,6 @@ import org.springframework.data.annotation.TypeAlias;
 public class ConversationCreation extends ConversationNotification {
     String name;
 
-    @Builder.Default
-    String content = "Conversation created";
-
     @Override
     public DetailActionType getActionType() {
         return DetailActionType.CREATE;

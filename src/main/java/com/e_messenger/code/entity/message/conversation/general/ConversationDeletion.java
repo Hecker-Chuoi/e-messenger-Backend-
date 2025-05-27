@@ -15,8 +15,6 @@ import org.springframework.data.annotation.TypeAlias;
 public class ConversationDeletion extends ConversationNotification {
     String name;
 
-    @Builder.Default
-    String content = "Conversation has been deleted";
 
     @Override
     public DetailActionType getActionType() {

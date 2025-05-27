@@ -82,6 +82,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         group.setId(UUID.randomUUID().toString());
 
         ConversationCreation message = ConversationCreation.builder()
+                .content("Conversation created")
                 .name(group.getConversationName())
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
@@ -107,6 +108,7 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ChangeName message = ChangeName.builder()
+                .content("Conversation's name updated")
                 .oldName(group.getConversationName())
                 .newName(newName)
                 .actorId(actor.getId())
@@ -146,6 +148,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         );
 
         ChangeParticipant message = ChangeParticipant.builder()
+                .content("Participants updated")
                 .affectedParticipants(participantIds)
                 .method(ChangeParticipant.Method.ADD)
                 .actorId(actor.getId())
@@ -178,6 +181,7 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ChangeParticipant message = ChangeParticipant.builder()
+                .content("Participants updated")
                 .affectedParticipants(removeIds)
                 .method(ChangeParticipant.Method.REMOVE)
                 .actorId(actor.getId())
@@ -206,6 +210,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.changeOwner(group, principal.getName(), newOwnerId);
 
         ChangeRole message = ChangeRole.builder()
+                .content("Group's owner has changed")
                 .fromRole(null)
                 .toRole(ConversationRole.OWNER)
                 .affectedParticipants(List.of(newOwnerId))
@@ -237,6 +242,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.setCoOwners(group, validUsers);
 
         ChangeRole message = ChangeRole.builder()
+                .content("Participants's role updated")
                 .fromRole(ConversationRole.MEMBER)
                 .toRole(ConversationRole.CO_OWNER)
                 .affectedParticipants(coOwnerIds)
@@ -267,6 +273,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.setMembers(group, validUsers);
 
         ChangeRole message = ChangeRole.builder()
+                .content("Participants's role updated")
                 .fromRole(ConversationRole.CO_OWNER)
                 .toRole(ConversationRole.MEMBER)
                 .affectedParticipants(participantIds)
@@ -300,6 +307,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         );
 
         LeaveConversation message = LeaveConversation.builder()
+                .content("Someone has left group")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
@@ -324,6 +332,7 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ConversationDeletion message = ConversationDeletion.builder()
+                .content("Conversation deleted")
                 .name(group.getConversationName())
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())

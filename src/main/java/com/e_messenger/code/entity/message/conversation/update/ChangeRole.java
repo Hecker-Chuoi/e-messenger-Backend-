@@ -19,9 +19,6 @@ public class ChangeRole extends ConversationNotification {
     ConversationRole toRole;
     List<String> affectedParticipants;
 
-    @Builder.Default
-    String content = "Participants's role has been changed";
-
     @Override
     public DetailActionType getActionType() {
         return DetailActionType.CHANGE_ROLE;

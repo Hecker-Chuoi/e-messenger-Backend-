@@ -12,9 +12,6 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("leaveConversation")
 public class LeaveConversation extends ConversationNotification {
 
-    @Builder.Default
-    String content = "Someone has left the conversation";
-
     @Override
     public DetailActionType getActionType() {
         return DetailActionType.LEAVE;

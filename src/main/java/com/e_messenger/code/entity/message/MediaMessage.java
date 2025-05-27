@@ -16,9 +16,6 @@ public class MediaMessage extends Message{
     MediaType mediaType;
     String url;
 
-    @Builder.Default
-    String content = "[Media message]";
-
     @Override
     public GeneralType getType() {
         return GeneralType.MEDIA;
