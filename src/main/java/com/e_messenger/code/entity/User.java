@@ -11,6 +11,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -30,7 +31,7 @@ public class User {
     String password;
 
     // thông tin cá nhân
-    LocalDate dob;
+    Instant dob;
     Gender gender;
     String displayName;
     String email;
@@ -38,7 +39,7 @@ public class User {
     // thông tin hồ sơ
     String avatarUrl;
     String bio;
-    LocalDateTime updatedAt;
+    Instant updatedAt;
 
     // Account is deleted
     @Builder.Default

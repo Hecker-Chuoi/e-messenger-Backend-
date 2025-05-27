@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
+//@Configuration
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class OtpService {
@@ -23,10 +26,11 @@ public class OtpService {
     @NonFinal
     int otpTtl;
 
-    public String generateNewKey(String id){
-        String newKey = generateKey();
+//    @Bean
+    public String generateNewKey(){
+        String newKey = generateOtp();
         redisTemplate.opsForValue().set(
-                getCacheKey(id),
+                getOtpKey("Test"),
                 newKey,
                 otpTtl,
                 TimeUnit.SECONDS
@@ -35,18 +39,22 @@ public class OtpService {
     }
 
     public boolean isKeyValid(String id, String key){
-        return Objects.equals(getCacheKey(id), key);
+        return Objects.equals(getCachedOtp(id), key);
     }
 
     public void deleteKey(String id){
-        redisTemplate.delete(getCacheKey(id));
+        redisTemplate.delete(getOtpKey(id));
     }
 
-    private String getCacheKey(String id){
+    private String getCachedOtp(String id){
+        return redisTemplate.opsForValue().get(getOtpKey(id));
+    }
+
+    private String getOtpKey(String id){
         return "otp:%s".formatted(id);
     }
 
-    private String generateKey(){
+    private String generateOtp(){
         return String.valueOf(100000 + secureRandom.nextInt(900000));
     }
 }

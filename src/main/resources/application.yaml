@@ -28,10 +28,15 @@ spring:
           starttls:
             enable: true
             required: true
+
   cache:
     redis:
       otp-ttl: 120
 
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    serialization:
+      write-dates-as-timestamps: false
 
 jwt:
   duration:

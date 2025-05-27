@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -36,7 +37,7 @@ public class ParticipantUtil {
                 .displayName(user.getDisplayName())
                 .phoneNumber(user.getPhoneNumber())
                 .role(role)
-                .joinAt(LocalDateTime.now())
+                .joinAt(Instant.now())
                 .build();
     }
 

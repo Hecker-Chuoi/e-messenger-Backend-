@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,5 +28,5 @@ public class ConversationResponse {
     String lastMessage;
     String lastSenderId;
     String lastSenderName;
-    LocalDateTime lastMessageTime;
+    Instant lastMessageTime;
 }

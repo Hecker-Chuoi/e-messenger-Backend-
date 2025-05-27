@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -54,7 +54,7 @@ public class UserService {
         User user = userMapper.toEntity(request);
         user.setId(UUID.randomUUID().toString());
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(Instant.now());
 
         if(user.getGender().equals(Gender.MALE))
             user.setAvatarUrl(manDefault);
@@ -90,14 +90,14 @@ public class UserService {
     public User updateInfo(UserUpdateRequest request){
         User user = getCurrentUser();
         userMapper.updateUser(user, request);
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(Instant.now());
 
         return userRepo.save(user);
     }
 
     public User setAvatar(MultipartFile file) throws IOException {
         User user = getCurrentUser();
-        Map result = storageService.uploadImage(file, "E-messenger/Avatar");
+        Map result = storageService.uploadFile(file);
         user.setAvatarUrl((String) result.get("url"));
         return userRepo.save(user);
     }

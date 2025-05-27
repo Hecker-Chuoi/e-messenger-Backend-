@@ -28,7 +28,8 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,24 +77,23 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
 
-        group.setParticipants(participantUtil.toGroupParticipants(validUsers));
-        group.setType(ConversationType.GROUP);
-        group.setLastMessageTime(LocalDateTime.now());
-        group.setId(UUID.randomUUID().toString());
-
         ConversationCreation message = ConversationCreation.builder()
                 .content("Conversation created")
                 .name(group.getConversationName())
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
+
+        group.setParticipants(participantUtil.toGroupParticipants(validUsers));
+        group.setType(ConversationType.GROUP);
+        group.setId(UUID.randomUUID().toString());
 
         messageRepo.save(message);
 
         conversationMapper.updateLastSentInfo(group, message);
-        group =  conversationRepo.save(group);
+        conversationRepo.save(group);
 
         notificationService.notifyConversationUpdate(group, message);
         return group;
@@ -104,8 +104,9 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER))
+        if(!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER)) {
             throw new AppException(StatusCode.UNCATEGORIZED);
+        }
 
         ChangeName message = ChangeName.builder()
                 .content("Conversation's name updated")
@@ -114,7 +115,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         group.setConversationName(newName);
@@ -154,7 +155,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -187,7 +188,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -217,7 +218,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -249,7 +250,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -280,7 +281,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -311,7 +312,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -337,7 +338,7 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(group.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         notificationService.notifyConversationUpdate(group, message);

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.bson.types.ObjectId;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -22,7 +23,7 @@ public class UserResponse {
     String password;
 
 // thông tin cá nhân
-    LocalDate dob;
+    Instant dob;
     String displayName;
     String email;
 
@@ -30,5 +31,5 @@ public class UserResponse {
     String avatarUrl;
 //    ActiveStatus activeStatus;
     String bio;
-    LocalDateTime updatedAt;
+    Instant updatedAt;
 }

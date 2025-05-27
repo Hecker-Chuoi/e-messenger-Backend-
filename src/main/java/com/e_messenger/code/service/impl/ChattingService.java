@@ -27,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.awt.*;
 import java.io.IOException;
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
@@ -40,11 +41,9 @@ public class ChattingService {
     MessageRepository mainRepo;
     ConversationRepository conversationRepo;
 
-    MessageMapper messageMapper;
     ConversationMapper conversationMapper;
 
     UserService userService;
-    Cloudinary cloudinary;
     ConversationQueryServiceImpl conversationQueryService;
     private final NotificationService notificationService;
 
@@ -57,7 +56,7 @@ public class ChattingService {
                 .actorId(curUser.getId())
                 .actorName(curUser.getDisplayName())
                 .conversationId(conversationId)
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         conversationMapper.updateLastSentInfo(conv, message); // for display purpose
@@ -81,7 +80,7 @@ public class ChattingService {
                 .actorId(curUser.getId())
                 .actorName(curUser.getDisplayName())
                 .conversationId(conv.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         conversationMapper.updateLastSentInfo(conv, message);

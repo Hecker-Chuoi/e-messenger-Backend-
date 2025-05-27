@@ -6,6 +6,10 @@ public enum MediaType {
 
     final String uploadOption;
 
+    public String getUploadOption() {
+        return uploadOption;
+    }
+
     MediaType(String uploadOption) {
         this.uploadOption = uploadOption;
     }

@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Document(collection = "messages")
@@ -18,7 +19,7 @@ public abstract class Message {
     String actorName;
     String actorAvatarUrl;
     String conversationId;
-    LocalDateTime time;
+    Instant time;
 
     @Builder.ObtainVia(method = "getType", isStatic = false)
     final GeneralType type;

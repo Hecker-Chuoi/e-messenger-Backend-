@@ -19,6 +19,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Service
@@ -66,7 +67,7 @@ public class DirectChatServiceImpl extends DirectChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(direct.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -91,7 +92,7 @@ public class DirectChatServiceImpl extends DirectChatService {
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .conversationId(direct.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
             conversationRepo.delete(direct);
