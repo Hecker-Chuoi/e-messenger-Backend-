@@ -56,11 +56,15 @@ public class UserService {
         user.setPassword(encoder.encode(request.getPassword()));
         user.setUpdatedAt(Instant.now());
 
-        if(user.getGender().equals(Gender.MALE))
-            user.setAvatarUrl(manDefault);
-        else if(user.getGender().equals(Gender.FEMALE))
-            user.setAvatarUrl(womanDefault);
-        else user.setAvatarUrl(otherDefault);
+        try{
+            if(user.getGender().equals(Gender.MALE))
+                user.setAvatarUrl(manDefault);
+            else if(user.getGender().equals(Gender.FEMALE))
+                user.setAvatarUrl(womanDefault);
+            else user.setAvatarUrl(otherDefault);
+        } catch (Exception e) {
+            user.setAvatarUrl(otherDefault);
+        }
 
         return userRepo.save(user);
     }

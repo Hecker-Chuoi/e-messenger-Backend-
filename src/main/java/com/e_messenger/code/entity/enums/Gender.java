@@ -10,8 +10,8 @@ public enum Gender {
 
     @JsonCreator
     public static Gender getGender(String gender) {
-        if(gender.isBlank())
-            throw new AppException(StatusCode.UNCATEGORIZED);
+        if(gender == null || gender.isBlank())
+            return Gender.OTHER;
         try{
             return Gender.valueOf(gender.toUpperCase());
         }
