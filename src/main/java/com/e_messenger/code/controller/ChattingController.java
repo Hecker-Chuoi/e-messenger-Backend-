@@ -1,19 +1,12 @@
 package com.e_messenger.code.controller;
 
 import com.e_messenger.code.dto.requests.message.MediaMessageRequest;
-import com.e_messenger.code.dto.requests.message.MessageRequest;
 import com.e_messenger.code.dto.requests.message.TextMessageRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.MessageResponse;
-import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.message.Message;
-import com.e_messenger.code.entity.enums.GeneralType;
-import com.e_messenger.code.exception.AppException;
-import com.e_messenger.code.exception.StatusCode;
 import com.e_messenger.code.mapstruct.MessageMapper;
-import com.e_messenger.code.service.ConversationQueryService;
 import com.e_messenger.code.service.impl.ChattingService;
-import com.e_messenger.code.service.impl.NotificationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -35,27 +28,16 @@ import java.util.List;
 public class ChattingController {
     ChattingService mainService;
     MessageMapper messageMapper;
-    NotificationService notificationService;
-    ConversationQueryService conversationQueryService;
 
     @MessageMapping("/{conversationId}/send-text")
-    public <T extends TextMessageRequest> void sendMessage(@DestinationVariable String conversationId, @Payload T request, Principal principal) throws IOException {
-        Message result = null;
-
-        if(!request.getType().equals(GeneralType.TEXT))
-            throw new AppException(StatusCode.UNCATEGORIZED);
-
-        result = mainService.sendText(conversationId, request, principal);
+    public void sendText(@DestinationVariable String conversationId, @Payload TextMessageRequest request, Principal principal) throws IOException {
+        Message result = mainService.sendText(conversationId, request, principal);
     }
 
     @MessageMapping("/{conversationId}/send-media")
-    public <T extends MediaMessageRequest> void sendMessage(@DestinationVariable String conversationId, @Payload T request, Principal principal) throws IOException {
-        Message result = null;
-
-        if(!request.getType().equals(GeneralType.MEDIA))
-            throw new AppException(StatusCode.UNCATEGORIZED);
-
-        result = mainService.sendFile(conversationId, request, principal);
+    public void sendMedia(@DestinationVariable String conversationId, @Payload MediaMessageRequest request, Principal principal) throws IOException {
+        Message result = mainService.sendFile(conversationId, request, principal);
+        System.out.println(result);
     }
 
     @GetMapping("/histories/{conversationId}")

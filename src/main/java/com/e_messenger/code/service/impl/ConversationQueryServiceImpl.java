@@ -64,6 +64,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                 () -> new AppException(StatusCode.CONVERSATION_NOT_FOUND)
         );
         result.setConversationName(other.getDisplayName());
+        result.setAvatarUrl(other.getAvatarUrl());
 
         return result;
     }

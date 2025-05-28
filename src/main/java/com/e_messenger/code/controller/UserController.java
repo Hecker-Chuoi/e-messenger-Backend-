@@ -26,7 +26,6 @@ import java.io.IOException;
 public class UserController {
     UserService service;
     UserMapper mapper;
-    CloudStorageService storageService;
 
 //create
     @PostMapping

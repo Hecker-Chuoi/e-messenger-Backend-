@@ -31,10 +31,8 @@ public class CloudStorageService {
         Map<String, Object> config = new HashMap<>();
         config.put(
                 "resource_type",
-                MediaType
-                        .valueOf(contentType.split("/")[0]
-                        .toUpperCase())
-                        .getUploadOption());
+                MediaType.fromString(contentType.split("/")[0]).getUploadOption()
+        );
         return cloudinary.uploader().upload(file.getBytes(), config);
     }
 }

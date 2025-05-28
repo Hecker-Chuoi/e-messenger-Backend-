@@ -16,12 +16,12 @@ function login() {
         },
         body: JSON.stringify({ identifier, password })
     })
-        .then(res => res.json())
-        .then(data => {
-            accessToken = "Bearer " + data.result.accessToken;
-            log("Logged in. Token: " + accessToken);
-        })
-        .catch(err => log("Login error: " + err));
+    .then(res => res.json())
+    .then(data => {
+        accessToken = "Bearer " + data.result.accessToken;
+        log("Logged in. Token: " + accessToken);
+    })
+    .catch(err => log("Login error: " + err));
 }
 
 function connect() {
@@ -40,7 +40,7 @@ function connect() {
             log("Received!");
             message = JSON.parse(message.body);
             console.log(message);
-            showMessage(message.senderName + ": " + message.content);
+            showMessage(message.actorName + ": " + message.content);
         });
 
         stompClient.subscribe("/user/conversations", function (message) {
@@ -61,17 +61,15 @@ function disconnect() {
     }
 }
 
-function sendMessage() {
+async function sendMessage() {
     const type = document.querySelector("input[name='messageType']:checked").value;
 
     if (type === "TEXT") {
         const text = document.getElementById("messageInput").value;
         const payload = {
-            content: text,
-            type: "TEXT"
+            text: text
         };
-        stompClient.send("/chat/1-2/send-message", {}, JSON.stringify(payload));
-        showMessage("You: " + text);
+        stompClient.send("/chat/1-2/send-text", {}, JSON.stringify(payload));
     } else {
         const file = document.getElementById("fileInput").files[0];
         if (!file) {
@@ -79,16 +77,37 @@ function sendMessage() {
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = () => {
-            const base64 = reader.result;
-            const payload = {
-                content: base64,
-                type: type // "IMAGE" hoặc "AUDIO"
-            };
-            stompClient.send("/chat/1-2/send-message", {}, JSON.stringify(payload));
-        };
-        reader.readAsDataURL(file);
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("http://localhost:8080/e-messenger/files", {
+                method: "POST",
+                headers: {
+                    "Authorization": accessToken
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                alert("Upload failed");
+                return;
+            }
+
+            const abc = await response.text();
+
+            stompClient.send(
+                "/chat/1-2/send-media",
+                {},
+                JSON.stringify({
+                    mediaType: type.toUpperCase(),
+                    uploadedUrl: abc
+                })
+            );
+        } catch (err) {
+            console.error("Lỗi xảy ra trong fetch:", err);
+            alert("Có lỗi khi upload");
+        }
     }
 }
 

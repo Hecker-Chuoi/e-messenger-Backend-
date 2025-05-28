@@ -6,11 +6,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.TypeAlias;
 
+@TypeAlias("textMessage")
 @Data
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@TypeAlias("textMessage")
 public class TextMessage extends Message{
 
     @Override

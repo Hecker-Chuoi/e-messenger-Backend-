@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Document(collection = "conversations")
@@ -23,13 +22,14 @@ public class Conversation {
     String id;
 
     ConversationType type;
+    String avatarUrl;
     String conversationName;
     @Indexed
     List<Participant> participants;
 
     //fields for ui
     String lastMessage;
-    String lastSenderId;
-    String lastSenderName;
+    String lastActorId;
+    String lastActorName;
     Instant lastMessageTime;
 }

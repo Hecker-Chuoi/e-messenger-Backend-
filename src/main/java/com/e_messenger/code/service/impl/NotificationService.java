@@ -26,7 +26,7 @@ public class NotificationService {
         for(Participant participant : conv.getParticipants()) {
             messagingTemplate.convertAndSendToUser(
                     participant.getParticipantId(),
-                    "/user/messages",
+                    "/messages",
                     message
             );
         }

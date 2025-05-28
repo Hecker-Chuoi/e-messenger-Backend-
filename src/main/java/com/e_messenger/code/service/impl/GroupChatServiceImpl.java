@@ -11,6 +11,7 @@ import com.e_messenger.code.entity.message.ConversationNotification;
 import com.e_messenger.code.entity.message.conversation.general.ConversationCreation;
 import com.e_messenger.code.entity.message.conversation.general.ConversationDeletion;
 import com.e_messenger.code.entity.message.conversation.general.LeaveConversation;
+import com.e_messenger.code.entity.message.conversation.update.ChangeAvatar;
 import com.e_messenger.code.entity.message.conversation.update.ChangeName;
 import com.e_messenger.code.entity.message.conversation.update.ChangeParticipant;
 import com.e_messenger.code.entity.message.conversation.update.ChangeRole;
@@ -25,6 +26,8 @@ import com.e_messenger.code.utils.ParticipantUtil;
 import com.e_messenger.code.utils.UserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -52,6 +55,10 @@ public class GroupChatServiceImpl extends GroupChatService {
     UserUtil userUtil;
     ParticipantUtil participantUtil;
 
+    @NonFinal
+    @Value("${cloud.avatar.groupDefault}")
+    String defaultGroupAvatarUrl;
+
     private <T> List<T> addAll(List<T> list, List<T> items){
         list.addAll(items);
         return list;
@@ -71,11 +78,18 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         User actor = userService.getUserById(principal.getName());
-        Conversation group = conversationMapper.toEntity(request);
 
         if(!request.getParticipantIds().getFirst().equals(actor.getId())) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
+
+        Conversation group = Conversation.builder()
+                .conversationName(request.getGroupName())
+                .participants(participantUtil.toGroupParticipants(validUsers))
+                .type(ConversationType.GROUP)
+                .id(UUID.randomUUID().toString())
+                .avatarUrl(defaultGroupAvatarUrl)
+                .build();
 
         ConversationCreation message = ConversationCreation.builder()
                 .content("Conversation created")
@@ -85,10 +99,6 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
-
-        group.setParticipants(participantUtil.toGroupParticipants(validUsers));
-        group.setType(ConversationType.GROUP);
-        group.setId(UUID.randomUUID().toString());
 
         messageRepo.save(message);
 
@@ -126,6 +136,29 @@ public class GroupChatServiceImpl extends GroupChatService {
         conversationRepo.save(group);
 
         notificationService.notifyConversationUpdate(group, message);
+        return group;
+    }
+
+    public Conversation changeAvatar(String groupId, String newAvatarUrl, Principal principal){
+        User actor = userService.getUserById(principal.getName());
+        Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
+
+        group.setAvatarUrl(newAvatarUrl);
+
+        ChangeAvatar message = ChangeAvatar.builder()
+                .content("Conversation's avatar changed")
+                .conversationId(groupId)
+                .actorId(actor.getId())
+                .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
+                .time(Instant.now())
+                .build();
+
+        messageRepo.save(message);
+
+        conversationMapper.updateLastSentInfo(group, message);
+        conversationRepo.save(group);
+
         return group;
     }
 
