@@ -89,4 +89,12 @@ public class OpenAPIConfig {
                 .pathsToMatch("/group/**")
                 .build();
     }
+
+    @Bean
+    public GroupedOpenApi cloudApi(){
+        return GroupedOpenApi.builder()
+                .group("Cloud")
+                .pathsToMatch("/files/**")
+                .build();
+    }
 }

@@ -14,13 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,13 +38,32 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         return id1 + "-" + id2;
     }
 
+    private void updateConversationInfo(Conversation conv, String curUserId){
+        if(!conv.getType().equals(ConversationType.DIRECT))
+            return;
+        // set conversation's name by other's name
+        conv.setConversationName(getDirectChatName(curUserId, conv.getParticipants()));
+        // set conversation's avatar by other's avatar
+        conv.setAvatarUrl(getDirectChatAvatarUrl(curUserId, conv.getParticipants()));
+    }
+
+    private String getDirectChatAvatarUrl(String curUserId, List<Participant> participants){
+        for(Participant participant : participants){
+            if(!participant.getParticipantId().equals(curUserId)){
+                User other = userService.getUserByIdentifier(participant.getParticipantId());
+                return other.getAvatarUrl();
+            }
+        }
+        return "";
+    }
+
     private String getDirectChatPattern(String id){
         return "^%s-|-%s$".formatted(id, id);
     }
 
-    private String getDirectChatName(User curUser, List<String> ids){
-        String otherId = ids.getFirst().equals(curUser.getId()) ? ids.getLast() : ids.getFirst();
-        return userService.getUserById(otherId).getDisplayName();
+    private String getDirectChatName(String curUserId, List<Participant> ids){
+        Participant otherId = ids.getFirst().getParticipantId().equals(curUserId) ? ids.getLast() : ids.getFirst();
+        return otherId.getDisplayName();
     }
 
     // scenario: find other by email, use user's id to call this method to get conversation
@@ -64,6 +79,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                 () -> new AppException(StatusCode.CONVERSATION_NOT_FOUND)
         );
         result.setConversationName(other.getDisplayName());
+        result.setAvatarUrl(other.getAvatarUrl());
 
         return result;
     }
@@ -76,6 +92,8 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
 
         if(!participantUtil.hasConversationAccess(conv, userId))
             throw new AppException(StatusCode.UNCATEGORIZED);
+
+        updateConversationInfo(conv, userId);
 
         return conv;
     }
@@ -94,9 +112,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                 PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("lastMessageTime")))
         );
         for(Conversation conv : result){
-            conv.setConversationName(getDirectChatName(curUser,
-                    conv.getParticipants().stream().map(Participant::getParticipantId)
-                            .collect(Collectors.toList())));
+            updateConversationInfo(conv, curUser.getId());
         }
 
         return result;
@@ -121,11 +137,9 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
                     PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("lastMessageTime")))
                 );
 
-        result.forEach(e -> {
-            if(e.getType().equals(ConversationType.DIRECT))
-                e.setConversationName(getDirectChatName(curUser,
-                        e.getParticipants().stream().map(Participant::getParticipantId).collect(Collectors.toList())));
-        });
+        for(Conversation conv : result){
+            updateConversationInfo(conv, curUser.getId());
+        }
 
         return result;
     }

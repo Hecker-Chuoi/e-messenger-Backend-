@@ -11,9 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     User toEntity(UserCreationRequest request);
-    @Mapping(target = "id", expression = "java(user.getId().toString())")
     UserResponse toResponse(User user);
-    @Mapping(target = "id", expression = "java(user.getId().toString())")
     List<UserResponse> toResponses(List<User> users);
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     void updateUser(@MappingTarget User user, UserUpdateRequest request);

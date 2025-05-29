@@ -4,23 +4,25 @@ import com.e_messenger.code.entity.enums.GeneralType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Document(collection = "messages")
+@TypeAlias("message")
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public abstract class Message {
     String content;
     String actorId;
     String actorName;
+    String actorAvatarUrl;
     String conversationId;
-    LocalDateTime time;
+    Instant time;
+    GeneralType type;
 
-    @Builder.ObtainVia(method = "getType", isStatic = false)
-    final GeneralType type;
-
-    public abstract GeneralType getType();
 }

@@ -1,5 +1,7 @@
 package com.e_messenger.code.controller;
 
+import com.e_messenger.code.dto.responses.ApiResponse;
+import com.e_messenger.code.dto.responses.ConversationResponse;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.mapstruct.ConversationMapper;
 import com.e_messenger.code.service.ConversationQueryService;
@@ -23,17 +25,20 @@ import java.security.Principal;
 public class DirectChatController {
     DirectChatService service;
     ConversationMapper conversationMapper;
-    ConversationQueryService conversationQueryService;
-    NotificationService notificationService;
 
-    @MessageMapping("/direct/create/{otherId}")
-    public void createDirectChat(@DestinationVariable String otherId, Principal principal) {
+    @PostMapping("/{otherId}")
+    public ApiResponse<ConversationResponse> createDirectChat(@PathVariable String otherId, Principal principal) {
         Conversation result = service.createDirectChat(otherId, principal);
-
+        return ApiResponse.<ConversationResponse>builder()
+                .result(conversationMapper.toResponse(result))
+                .build();
     }
 
-    @MessageMapping("/direct/{conversationId}/delete")
-    public void deleteConversation(@DestinationVariable String conversationId, Principal principal) {
+    @DeleteMapping("/{conversationId}")
+    public ApiResponse<String> deleteConversation(@PathVariable String conversationId, Principal principal) {
         service.deleteConversation(conversationId, principal);
+        return ApiResponse.<String>builder()
+                .result("Successfully")
+                .build();
     }
 }

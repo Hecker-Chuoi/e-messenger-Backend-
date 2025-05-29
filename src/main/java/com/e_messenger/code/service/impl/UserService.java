@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +33,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder encoder;
     CloudStorageService storageService;
+    ActiveStatusService statusService;
 
     @NonFinal
     @Value("${cloud.avatar.otherDefault}")
@@ -54,13 +55,17 @@ public class UserService {
         User user = userMapper.toEntity(request);
         user.setId(UUID.randomUUID().toString());
         user.setPassword(encoder.encode(request.getPassword()));
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(Instant.now());
 
-        if(user.getGender().equals(Gender.MALE))
-            user.setAvatarUrl(manDefault);
-        else if(user.getGender().equals(Gender.FEMALE))
-            user.setAvatarUrl(womanDefault);
-        else user.setAvatarUrl(otherDefault);
+        try{
+            if(user.getGender().equals(Gender.MALE))
+                user.setAvatarUrl(manDefault);
+            else if(user.getGender().equals(Gender.FEMALE))
+                user.setAvatarUrl(womanDefault);
+            else user.setAvatarUrl(otherDefault);
+        } catch (Exception e) {
+            user.setAvatarUrl(otherDefault);
+        }
 
         return userRepo.save(user);
     }
@@ -75,9 +80,11 @@ public class UserService {
     }
 
     public User getUserById(String id) {
-        return userRepo.findById(id).orElseThrow(
+        User user = userRepo.findById(id).orElseThrow(
                 () -> new AppException(StatusCode.UNCATEGORIZED)
         );
+        user.setActiveStatus(statusService.getActiveStatus(id));
+        return user;
     }
 
     public User getCurrentUser(){
@@ -90,14 +97,14 @@ public class UserService {
     public User updateInfo(UserUpdateRequest request){
         User user = getCurrentUser();
         userMapper.updateUser(user, request);
-        user.setUpdatedAt(LocalDateTime.now());
+        user.setUpdatedAt(Instant.now());
 
         return userRepo.save(user);
     }
 
     public User setAvatar(MultipartFile file) throws IOException {
         User user = getCurrentUser();
-        Map result = storageService.uploadImage(file, "E-messenger/Avatar");
+        Map result = storageService.uploadFile(file);
         user.setAvatarUrl((String) result.get("url"));
         return userRepo.save(user);
     }
@@ -112,5 +119,11 @@ public class UserService {
         user.setPassword(encoder.encode(request.getNewPassword()));
         userRepo.save(user);
         return "Password changed successfully!";
+    }
+
+    public User updateFcmToken(String newToken){
+        User user = getCurrentUser();
+        user.setFcmToken(newToken);
+        return user;
     }
 }

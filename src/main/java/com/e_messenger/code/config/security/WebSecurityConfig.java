@@ -40,7 +40,8 @@ public class WebSecurityConfig {
             "/static/**",
             "/resources/**",
             "/js/**",
-            "/upload/**"
+            "/upload/**",
+            "/test/**"
     };
 
     String[] USER_ENDPOINTS = {
@@ -49,7 +50,8 @@ public class WebSecurityConfig {
             "/users/**",
             "/conversations/**",
             "/direct/**",
-            "/group/**"
+            "/group/**",
+            "/files/**"
     };
 
     @Bean

@@ -7,7 +7,6 @@ import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.UserMapper;
-import com.e_messenger.code.service.impl.CloudStorageService;
 import com.e_messenger.code.service.impl.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -26,7 +25,6 @@ import java.io.IOException;
 public class UserController {
     UserService service;
     UserMapper mapper;
-    CloudStorageService storageService;
 
 //create
     @PostMapping
@@ -81,6 +79,14 @@ public class UserController {
     public ApiResponse<String> changePassword(@RequestBody @Valid PasswordChangeRequest request){
         return ApiResponse.<String>builder()
                 .result(service.changePassword(request))
+                .build();
+    }
+
+    @SecurityRequirement(name = "user token")
+    @PutMapping("/fcm-token")
+    public ApiResponse<UserResponse> updateFcmToken(@RequestBody String newToken){
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(service.updateFcmToken(newToken)))
                 .build();
     }
 

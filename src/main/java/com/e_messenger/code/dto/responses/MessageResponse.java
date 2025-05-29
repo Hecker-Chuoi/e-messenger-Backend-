@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -16,6 +17,6 @@ public class MessageResponse {
     String actorId;
     String actorName;
     String conversationId;
-    LocalDateTime time;
+    Instant time;
     GeneralType type;
 }

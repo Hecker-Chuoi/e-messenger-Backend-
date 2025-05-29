@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 @Data
@@ -19,8 +20,7 @@ import java.time.LocalDate;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UserUpdateRequest {
 // thông tin cá nhân
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    LocalDate dob;
+    Instant dob;
     String displayName;
     @EmailValidation
     String email;

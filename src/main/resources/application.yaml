@@ -10,9 +10,33 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/e-messenger
+
   servlet:
     multipart:
       max-file-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "nguyentienht1910@gmail.com"
+    password: "jibe mhgs fzjp yupe"
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  cache:
+    redis:
+      otp-ttl: 120
+
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    serialization:
+      write-dates-as-timestamps: false
 
 jwt:
   duration:

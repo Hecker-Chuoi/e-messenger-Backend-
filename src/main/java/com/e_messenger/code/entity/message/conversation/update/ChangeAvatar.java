@@ -8,15 +8,8 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeAvatar")
 public class ChangeAvatar extends ConversationNotification {
-    @Builder.Default
-    String content = "Conversation's avatar has been changed";
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CHANGE_AVATAR;
-    }
-
 }

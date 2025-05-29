@@ -3,6 +3,8 @@ package com.e_messenger.code.service.impl;
 import com.e_messenger.code.entity.enums.ConversationType;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.entity.enums.DetailActionType;
+import com.e_messenger.code.entity.enums.GeneralType;
 import com.e_messenger.code.entity.message.conversation.general.ConversationCreation;
 import com.e_messenger.code.entity.message.conversation.general.ConversationDeletion;
 import com.e_messenger.code.exception.AppException;
@@ -14,12 +16,10 @@ import com.e_messenger.code.service.DirectChatService;
 import com.e_messenger.code.utils.ParticipantUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -61,11 +61,15 @@ public class DirectChatServiceImpl extends DirectChatService {
                 .build();
 
         ConversationCreation message = ConversationCreation.builder()
-                .name(direct.getConversationName())
+                .actionType(DetailActionType.CREATE)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("%s's started a conversation with you".formatted(actor.getDisplayName()))
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(direct.getId())
-                .time(LocalDateTime.now())
+                .time(Instant.now())
                 .build();
 
         messageRepo.save(message);
@@ -74,7 +78,6 @@ public class DirectChatServiceImpl extends DirectChatService {
         conversationRepo.save(direct);
 
         notificationService.notifyConversationUpdate(direct, message);
-
         return direct;
     }
 
@@ -85,17 +88,23 @@ public class DirectChatServiceImpl extends DirectChatService {
 
         if(direct.getType().equals(ConversationType.DIRECT)){
             ConversationDeletion message = ConversationDeletion.builder()
-                .name(direct.getConversationName())
-                .actorId(actor.getId())
-                .actorName(actor.getDisplayName())
-                .conversationId(direct.getId())
-                .time(LocalDateTime.now())
+                    .actionType(DetailActionType.DELETE)
+                    // parent fields
+                    .type(GeneralType.CONVERSATION)
+                    .content("Conversation deleted")
+                    .actorId(actor.getId())
+                    .actorName(actor.getDisplayName())
+                    .actorAvatarUrl(actor.getAvatarUrl())
+                    .conversationId(direct.getId())
+                    .time(Instant.now())
                 .build();
 
             conversationRepo.delete(direct);
 
             notificationService.notifyConversationUpdate(direct, message);
         }
-        throw new AppException(StatusCode.UNCATEGORIZED);
+        else{
+            throw new AppException(StatusCode.UNCATEGORIZED);
+        }
     }
 }

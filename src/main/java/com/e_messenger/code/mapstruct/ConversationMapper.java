@@ -24,8 +24,8 @@ public interface ConversationMapper {
 
     @Mapping(target = "type", ignore = true)
     @Mapping(target = "lastMessage", source = "content")
-    @Mapping(target = "lastSenderId", source = "actorId")
+    @Mapping(target = "lastActorId", source = "actorId")
     @Mapping(target = "lastMessageTime", source = "time")
-    @Mapping(target = "lastSenderName", source = "actorName")
+    @Mapping(target = "lastActorName", source = "actorName")
     void updateLastSentInfo(@MappingTarget Conversation conversation, Message lastMessage);
 }

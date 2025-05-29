@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
@@ -14,6 +16,7 @@ public class Participant {
     String participantId;
     String displayName;
     String phoneNumber;
+    String avatarUrl;
     ConversationRole role;
-    LocalDateTime joinAt;
+    Instant joinAt;
 }

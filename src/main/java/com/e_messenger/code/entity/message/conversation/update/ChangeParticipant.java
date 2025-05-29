@@ -11,12 +11,10 @@ import java.util.List;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeParticipant")
 public class ChangeParticipant extends ConversationNotification {
-
-    @Builder.Default
-    String content = "Participants updated";
 
     public enum Method{
         ADD, REMOVE
@@ -24,9 +22,4 @@ public class ChangeParticipant extends ConversationNotification {
 
     Method method;
     List<String> affectedParticipants;
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CHANGE_PARTICIPANTS;
-    }
 }

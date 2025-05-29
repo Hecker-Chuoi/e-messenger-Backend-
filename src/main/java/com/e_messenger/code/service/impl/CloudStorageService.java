@@ -1,6 +1,7 @@
 package com.e_messenger.code.service.impl;
 
 import com.cloudinary.Cloudinary;
+import com.e_messenger.code.entity.enums.MediaType;
 import com.e_messenger.code.exception.AppException;
 import com.e_messenger.code.exception.StatusCode;
 import lombok.AccessLevel;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,36 +21,18 @@ import java.util.Map;
 public class CloudStorageService {
     Cloudinary cloudinary;
 
-    public Map uploadImage(MultipartFile file, String directory) throws IOException {
+    List<String> allowedContentType = List.of("image/jpeg", "image/png", "audio/mpeg");
+
+    public Map uploadFile(MultipartFile file) throws IOException {
         String contentType = file.getContentType().toLowerCase();
-        if(!(contentType.equals("image/jpeg") || contentType.equals("image/png")))
+        if(!allowedContentType.contains(contentType))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         Map<String, Object> config = new HashMap<>();
-        config.put("folder", directory);
-        config.put("resource_type", "image");
+        config.put(
+                "resource_type",
+                MediaType.fromString(contentType.split("/")[0]).getUploadOption()
+        );
         return cloudinary.uploader().upload(file.getBytes(), config);
     }
-
-//    public Map uploadAudio(MultipartFile file, String directory) throws IOException {
-//        String contentType = file.getContentType();
-//        if(!contentType.startsWith("audio/"))
-//            throw new AppException(StatusCode.UNCATEGORIZED);
-//
-//        Map<String, Object> config = new HashMap<>();
-//        config.put("folder", directory);
-//        config.put("resource_type", "video");
-//        return cloudinary.uploader().upload(file.getBytes(), config);
-//    }
-//
-//    public Map uploadVideo(MultipartFile file, String directory) throws IOException {
-//        String contentType = file.getContentType();
-//        if(!contentType.startsWith("video/"))
-//            throw new AppException(StatusCode.UNCATEGORIZED);
-//
-//        Map<String, Object> config = new HashMap<>();
-//        config.put("folder", directory);
-//        config.put("resource_type", "video");
-//        return cloudinary.uploader().upload(file.getBytes(), config);
-//    }
 }

@@ -9,18 +9,10 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @TypeAlias("conversationDeletion")
 public class ConversationDeletion extends ConversationNotification {
     String name;
-
-    @Builder.Default
-    String content = "Conversation has been deleted";
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.DELETE;
-    }
-
 }

@@ -1,5 +1,7 @@
 package com.e_messenger.code.dto.responses;
 
+import com.e_messenger.code.entity.enums.Gender;
+import com.e_messenger.code.service.impl.ActiveStatusService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.bson.types.ObjectId;
+import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -19,16 +23,21 @@ import java.time.LocalDateTime;
 public class UserResponse {
     String id;
     String phoneNumber;
-    String password;
 
 // thông tin cá nhân
-    LocalDate dob;
+    Instant dob;
     String displayName;
     String email;
+    Gender gender;
 
 // thông tin hồ sơ
     String avatarUrl;
-//    ActiveStatus activeStatus;
+    ActiveStatusService.ActiveStatus activeStatus;
     String bio;
-    LocalDateTime updatedAt;
+    Instant updatedAt;
+
+// thông tin hỗ trợ FE
+    String fcmToken;
+
+    Boolean isDeleted = false;
 }

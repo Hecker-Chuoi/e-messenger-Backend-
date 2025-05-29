@@ -9,18 +9,11 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @TypeAlias("mediaMessage")
 public class MediaMessage extends Message{
     MediaType mediaType;
     String url;
-
-    @Builder.Default
-    String content = "[Media message]";
-
-    @Override
-    public GeneralType getType() {
-        return GeneralType.MEDIA;
-    }
 }
