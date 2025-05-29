@@ -9,8 +9,7 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("textMessage")
 @Data
 @SuperBuilder
-//@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class TextMessage extends Message{

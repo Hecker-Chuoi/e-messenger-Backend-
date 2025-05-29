@@ -7,6 +7,8 @@ import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
 import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
 import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.User;
+import com.e_messenger.code.entity.enums.DetailActionType;
+import com.e_messenger.code.entity.enums.GeneralType;
 import com.e_messenger.code.entity.message.ConversationNotification;
 import com.e_messenger.code.entity.message.conversation.general.ConversationCreation;
 import com.e_messenger.code.entity.message.conversation.general.ConversationDeletion;
@@ -92,10 +94,14 @@ public class GroupChatServiceImpl extends GroupChatService {
                 .build();
 
         ConversationCreation message = ConversationCreation.builder()
-                .content("Conversation created")
+                .actionType(DetailActionType.CREATE)
                 .name(group.getConversationName())
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("%s's created group name %s".formatted(actor.getDisplayName(), group.getConversationName()))
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -119,11 +125,16 @@ public class GroupChatServiceImpl extends GroupChatService {
         }
 
         ChangeName message = ChangeName.builder()
-                .content("Conversation's name updated")
+                .actionType(DetailActionType.CHANGE_NAME)
                 .oldName(group.getConversationName())
                 .newName(newName)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("%s's changed conversation's name from %s to %s"
+                        .formatted(actor.getDisplayName(), group.getConversationName(), newName))
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -146,11 +157,14 @@ public class GroupChatServiceImpl extends GroupChatService {
         group.setAvatarUrl(newAvatarUrl);
 
         ChangeAvatar message = ChangeAvatar.builder()
+                .actionType(DetailActionType.CHANGE_AVATAR)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
                 .content("Conversation's avatar changed")
-                .conversationId(groupId)
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
                 .actorAvatarUrl(actor.getAvatarUrl())
+                .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
 
@@ -182,11 +196,15 @@ public class GroupChatServiceImpl extends GroupChatService {
         );
 
         ChangeParticipant message = ChangeParticipant.builder()
-                .content("Participants updated")
-                .affectedParticipants(participantIds)
+                .actionType(DetailActionType.CHANGE_PARTICIPANTS)
                 .method(ChangeParticipant.Method.ADD)
+                .affectedParticipants(participantIds)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Participants updated")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -215,11 +233,15 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ChangeParticipant message = ChangeParticipant.builder()
-                .content("Participants updated")
-                .affectedParticipants(removeIds)
+                .actionType(DetailActionType.CHANGE_PARTICIPANTS)
                 .method(ChangeParticipant.Method.REMOVE)
+                .affectedParticipants(removeIds)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Participants updated")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -244,12 +266,16 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.changeOwner(group, principal.getName(), newOwnerId);
 
         ChangeRole message = ChangeRole.builder()
-                .content("Group's owner has changed")
+                .actionType(DetailActionType.CHANGE_ROLE)
                 .fromRole(null)
                 .toRole(ConversationRole.OWNER)
                 .affectedParticipants(List.of(newOwnerId))
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Group's owner has changed")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -276,12 +302,16 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.setCoOwners(group, validUsers);
 
         ChangeRole message = ChangeRole.builder()
-                .content("Participants's role updated")
+                .actionType(DetailActionType.CHANGE_ROLE)
                 .fromRole(ConversationRole.MEMBER)
                 .toRole(ConversationRole.CO_OWNER)
                 .affectedParticipants(coOwnerIds)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Participants's role updated")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -307,12 +337,16 @@ public class GroupChatServiceImpl extends GroupChatService {
         participantUtil.setMembers(group, validUsers);
 
         ChangeRole message = ChangeRole.builder()
-                .content("Participants's role updated")
+                .actionType(DetailActionType.CHANGE_ROLE)
                 .fromRole(ConversationRole.CO_OWNER)
                 .toRole(ConversationRole.MEMBER)
                 .affectedParticipants(participantIds)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Group's owner has changed")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -341,9 +375,13 @@ public class GroupChatServiceImpl extends GroupChatService {
         );
 
         LeaveConversation message = LeaveConversation.builder()
+                .actionType(DetailActionType.LEAVE)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
                 .content("Someone has left group")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();
@@ -366,10 +404,13 @@ public class GroupChatServiceImpl extends GroupChatService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ConversationDeletion message = ConversationDeletion.builder()
-                .content("Conversation deleted")
                 .name(group.getConversationName())
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Conversation deleted")
                 .actorId(actor.getId())
                 .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
                 .conversationId(group.getId())
                 .time(Instant.now())
                 .build();

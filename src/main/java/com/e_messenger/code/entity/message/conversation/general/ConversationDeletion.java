@@ -9,12 +9,10 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
-//@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @TypeAlias("conversationDeletion")
 public class ConversationDeletion extends ConversationNotification {
     String name;
-
 }

@@ -11,8 +11,7 @@ import java.util.List;
 
 @Data
 @SuperBuilder
-//@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeParticipant")
 public class ChangeParticipant extends ConversationNotification {

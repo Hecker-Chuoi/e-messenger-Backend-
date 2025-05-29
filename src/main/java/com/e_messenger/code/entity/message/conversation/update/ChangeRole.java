@@ -1,8 +1,6 @@
 package com.e_messenger.code.entity.message.conversation.update;
 
-import com.e_messenger.code.entity.Participant;
 import com.e_messenger.code.entity.enums.ConversationRole;
-import com.e_messenger.code.entity.enums.DetailActionType;
 import com.e_messenger.code.entity.message.ConversationNotification;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,8 +10,7 @@ import java.util.List;
 
 @Data
 @SuperBuilder
-//@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeRole")
 public class ChangeRole extends ConversationNotification {

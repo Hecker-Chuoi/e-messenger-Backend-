@@ -48,7 +48,7 @@ function connect() {
             log("Received!");
             message = JSON.parse(message.body);
             console.log(message);
-            showMessage(message.senderName + ": " + message.content);
+            showMessage(message.actorName + ": " + message.content);
         });
     }, function (error) {
         log("Connect error: " + error);

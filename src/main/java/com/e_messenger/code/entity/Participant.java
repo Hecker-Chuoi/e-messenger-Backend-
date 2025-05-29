@@ -16,6 +16,7 @@ public class Participant {
     String participantId;
     String displayName;
     String phoneNumber;
+    String avatarUrl;
     ConversationRole role;
     Instant joinAt;
 }
