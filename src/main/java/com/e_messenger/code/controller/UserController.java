@@ -7,7 +7,6 @@ import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.UserMapper;
-import com.e_messenger.code.service.impl.CloudStorageService;
 import com.e_messenger.code.service.impl.UserService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;

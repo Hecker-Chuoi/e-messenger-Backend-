@@ -3,9 +3,7 @@ package com.e_messenger.code.controller;
 import com.e_messenger.code.dto.requests.message.MediaMessageRequest;
 import com.e_messenger.code.dto.requests.message.TextMessageRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
-import com.e_messenger.code.dto.responses.MessageResponse;
 import com.e_messenger.code.entity.message.Message;
-import com.e_messenger.code.mapstruct.MessageMapper;
 import com.e_messenger.code.service.impl.ChattingService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.AccessLevel;
@@ -27,7 +25,6 @@ import java.util.List;
 @RestController
 public class ChattingController {
     ChattingService mainService;
-    MessageMapper messageMapper;
 
     @MessageMapping("/{conversationId}/send-text")
     public void sendText(@DestinationVariable String conversationId, @Payload TextMessageRequest request, Principal principal) throws IOException {
@@ -41,14 +38,14 @@ public class ChattingController {
     }
 
     @GetMapping("/histories/{conversationId}")
-    public ApiResponse<List<MessageResponse>> getMessageHistory(
+    public ApiResponse<List<Message>> getMessageHistory(
             @PathVariable String conversationId,
             @RequestParam(defaultValue = "0") int pageNum,
             @RequestParam(defaultValue = "20") int pageSize
     ){
         List<Message> messages = mainService.getMessageHistory(conversationId, pageNum, pageSize);
-        return ApiResponse.<List<MessageResponse>>builder()
-                .result(messageMapper.toResponses(messages))
+        return ApiResponse.<List<Message>>builder()
+                .result(messages)
                 .build();
     }
 }
