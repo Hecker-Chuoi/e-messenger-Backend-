@@ -33,6 +33,7 @@ public class UserService {
     UserMapper userMapper;
     PasswordEncoder encoder;
     CloudStorageService storageService;
+    ActiveStatusService statusService;
 
     @NonFinal
     @Value("${cloud.avatar.otherDefault}")
@@ -79,9 +80,11 @@ public class UserService {
     }
 
     public User getUserById(String id) {
-        return userRepo.findById(id).orElseThrow(
+        User user = userRepo.findById(id).orElseThrow(
                 () -> new AppException(StatusCode.UNCATEGORIZED)
         );
+        user.setActiveStatus(statusService.getActiveStatus(id));
+        return user;
     }
 
     public User getCurrentUser(){

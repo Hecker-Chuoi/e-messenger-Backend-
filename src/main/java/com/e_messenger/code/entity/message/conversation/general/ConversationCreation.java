@@ -8,14 +8,11 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+//@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("conversationCreation")
 public class ConversationCreation extends ConversationNotification {
     String name;
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CREATE;
-    }
 
 }

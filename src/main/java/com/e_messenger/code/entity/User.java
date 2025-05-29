@@ -1,6 +1,7 @@
 package com.e_messenger.code.entity;
 
 import com.e_messenger.code.entity.enums.Gender;
+import com.e_messenger.code.service.impl.ActiveStatusService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class User {
     String avatarUrl;
     String bio;
     Instant updatedAt;
+    ActiveStatusService.ActiveStatus activeStatus;
 
     // Account is deleted
     @Builder.Default

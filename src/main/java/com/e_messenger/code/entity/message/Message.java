@@ -8,12 +8,13 @@ import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 
 @Document(collection = "messages")
 @TypeAlias("message")
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public abstract class Message {
     String content;
@@ -22,9 +23,6 @@ public abstract class Message {
     String actorAvatarUrl;
     String conversationId;
     Instant time;
+    GeneralType type;
 
-    @Builder.ObtainVia(method = "getType", isStatic = false)
-    final GeneralType type;
-
-    public abstract GeneralType getType();
 }

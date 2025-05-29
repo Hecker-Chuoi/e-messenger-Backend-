@@ -1,6 +1,7 @@
 package com.e_messenger.code.dto.responses;
 
 import com.e_messenger.code.entity.enums.Gender;
+import com.e_messenger.code.service.impl.ActiveStatusService;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,7 +32,7 @@ public class UserResponse {
 
 // thông tin hồ sơ
     String avatarUrl;
-//    ActiveStatus activeStatus;
+    ActiveStatusService.ActiveStatus activeStatus;
     String bio;
     Instant updatedAt;
 

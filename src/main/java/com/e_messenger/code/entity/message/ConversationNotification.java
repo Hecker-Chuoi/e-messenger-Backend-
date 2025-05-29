@@ -8,16 +8,10 @@ import lombok.experimental.SuperBuilder;
 
 @Data
 @SuperBuilder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public abstract class ConversationNotification extends Message {
-    @Builder.ObtainVia(method = "getActionType", isStatic = false)
     DetailActionType actionType;
-
-    @Override
-    public GeneralType getType() {
-        return GeneralType.CONVERSATION;
-    }
-
-    public abstract DetailActionType getActionType();
 }

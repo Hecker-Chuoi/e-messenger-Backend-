@@ -3,6 +3,7 @@ package com.e_messenger.code.service.impl;
 import com.e_messenger.code.dto.requests.message.MediaMessageRequest;
 import com.e_messenger.code.dto.requests.message.TextMessageRequest;
 import com.e_messenger.code.entity.Conversation;
+import com.e_messenger.code.entity.enums.GeneralType;
 import com.e_messenger.code.entity.enums.MediaType;
 import com.e_messenger.code.entity.message.MediaMessage;
 import com.e_messenger.code.entity.message.Message;
@@ -46,6 +47,7 @@ public class ChattingService {
                 .actorName(curUser.getDisplayName())
                 .conversationId(conversationId)
                 .time(Instant.now())
+                .type(GeneralType.TEXT)
                 .build();
 
         mainRepo.save(message);
@@ -68,6 +70,7 @@ public class ChattingService {
                 .actorName(curUser.getDisplayName())
                 .conversationId(conv.getId())
                 .time(Instant.now())
+                .type(GeneralType.MEDIA)
                 .build();
 
         conversationMapper.updateLastSentInfo(conv, message);

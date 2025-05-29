@@ -8,12 +8,9 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+//@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("leaveConversation")
 public class LeaveConversation extends ConversationNotification {
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.LEAVE;
-    }
 }

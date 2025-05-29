@@ -12,16 +12,13 @@ import java.util.List;
 
 @Data
 @SuperBuilder
+//@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeRole")
 public class ChangeRole extends ConversationNotification {
     ConversationRole fromRole;
     ConversationRole toRole;
     List<String> affectedParticipants;
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CHANGE_ROLE;
-    }
 
 }

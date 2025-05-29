@@ -11,6 +11,8 @@ import java.util.List;
 
 @Data
 @SuperBuilder
+//@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeParticipant")
 public class ChangeParticipant extends ConversationNotification {
@@ -21,9 +23,4 @@ public class ChangeParticipant extends ConversationNotification {
 
     Method method;
     List<String> affectedParticipants;
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CHANGE_PARTICIPANTS;
-    }
 }

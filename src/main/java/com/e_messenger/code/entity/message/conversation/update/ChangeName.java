@@ -8,15 +8,11 @@ import org.springframework.data.annotation.TypeAlias;
 
 @Data
 @SuperBuilder
+//@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TypeAlias("changeName")
 public class ChangeName extends ConversationNotification {
     String oldName;
     String newName;
-
-    @Override
-    public DetailActionType getActionType() {
-        return DetailActionType.CHANGE_NAME;
-    }
-
 }
