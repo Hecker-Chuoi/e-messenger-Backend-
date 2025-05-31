@@ -50,7 +50,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     private String getDirectChatAvatarUrl(String curUserId, List<Participant> participants){
         for(Participant participant : participants){
             if(!participant.getParticipantId().equals(curUserId)){
-                User other = userService.getUserByIdentifier(participant.getParticipantId());
+                User other = userService.getUserById(participant.getParticipantId());
                 return other.getAvatarUrl();
             }
         }
@@ -101,7 +101,12 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     @Override
     public List<Participant> getParticipants(String groupId) {
         Conversation group = getConversationById(groupId, userService.getCurrentUser().getId());
-        return group.getParticipants();
+        List<Participant> result = group.getParticipants();
+        for(Participant x : result){
+            User user = userService.getUserById(x.getParticipantId());
+            x.setAvatarUrl(user.getAvatarUrl());
+        }
+        return result;
     }
 
     @Override

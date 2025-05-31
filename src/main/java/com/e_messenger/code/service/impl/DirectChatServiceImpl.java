@@ -39,7 +39,7 @@ public class DirectChatServiceImpl extends DirectChatService {
     @Override
     public Conversation createDirectChat(String otherId, Principal principal) {
         User actor = userService.getUserById(principal.getName());
-        User other = userService.getUserByIdentifier(otherId);
+        User other = userService.getUserById(otherId);
 
         if(actor.equals(other))
             throw new AppException(StatusCode.UNCATEGORIZED);
