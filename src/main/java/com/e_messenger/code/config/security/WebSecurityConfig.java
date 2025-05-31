@@ -51,7 +51,8 @@ public class WebSecurityConfig {
             "/conversations/**",
             "/direct/**",
             "/group/**",
-            "/files/**"
+            "/files/**",
+            "/contacts/**"
     };
 
     @Bean

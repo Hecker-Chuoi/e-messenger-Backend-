@@ -1,5 +1,6 @@
 package com.e_messenger.code.repository;
 
+import com.e_messenger.code.entity.User;
 import com.e_messenger.code.entity.enums.ConversationType;
 import com.e_messenger.code.entity.Conversation;
 import org.springframework.data.domain.Pageable;
