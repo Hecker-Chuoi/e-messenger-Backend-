@@ -6,4 +6,5 @@ import java.security.Principal;
 
 public abstract class ConversationService {
     abstract public void deleteConversation(String conversationId, Principal principal);
+    abstract public void checkAvailable(Conversation conv);
 }
