@@ -29,13 +29,12 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +44,7 @@ public class GroupChatServiceImpl extends GroupChatService {
     ConversationQueryService queryService;
     NotificationService notificationService;
     ConversationQueryService conversationQueryService;
+    CloudStorageService storageService;
 
     ConversationRepository conversationRepo;
     MessageRepository messageRepo;
@@ -67,6 +67,12 @@ public class GroupChatServiceImpl extends GroupChatService {
         Set<String> set = new LinkedHashSet<>(items);
         list.removeIf(e -> set.contains(e.getParticipantId()));
         return list;
+    }
+
+    @Override
+    public void checkAvailable(Conversation conv) {
+        if(!conv.getType().equals(ConversationType.GROUP))
+            throw new AppException(StatusCode.UNCATEGORIZED);
     }
 
     @Override
@@ -117,6 +123,8 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
+        checkAvailable(group);
+
         if (!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER)) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
@@ -147,11 +155,14 @@ public class GroupChatServiceImpl extends GroupChatService {
         return group;
     }
 
-    public Conversation changeAvatar(String groupId, String newAvatarUrl, Principal principal) {
+    public Conversation changeAvatar(String groupId, MultipartFile avatar, Principal principal) throws IOException {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        group.setAvatarUrl(newAvatarUrl);
+        checkAvailable(group);
+
+        Map result = storageService.uploadFile(avatar);
+        group.setAvatarUrl((String) result.get("url"));
 
         ChangeAvatar message = ChangeAvatar.builder()
                 .actionType(DetailActionType.CHANGE_AVATAR)
@@ -177,6 +188,8 @@ public class GroupChatServiceImpl extends GroupChatService {
     public Conversation addParticipants(String groupId, List<String> participantIds, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
+
+        checkAvailable(group);
 
         if (!participantUtil.hasManagementRole(group, actor))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -220,6 +233,8 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
+        checkAvailable(group);
+
         if (!participantUtil.canAffect(group, actor, removeIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
@@ -257,6 +272,8 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
+        checkAvailable(group);
+
         if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
@@ -290,6 +307,8 @@ public class GroupChatServiceImpl extends GroupChatService {
     public Conversation setCoOwner(String groupId, List<String> coOwnerIds, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
+
+        checkAvailable(group);
 
         if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
@@ -327,6 +346,8 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
+        checkAvailable(group);
+
         if (!participantUtil.canAffect(group, actor, participantIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
@@ -362,6 +383,8 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
+        checkAvailable(group);
+
         if (group.getParticipants().size() == 1)
             throw new AppException(StatusCode.UNCATEGORIZED);
         if (participantUtil.getParticipantRole(group, principal.getName()).equals(ConversationRole.OWNER))
@@ -396,6 +419,8 @@ public class GroupChatServiceImpl extends GroupChatService {
     public void deleteConversation(String groupId, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
+
+        checkAvailable(group);
 
         if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);

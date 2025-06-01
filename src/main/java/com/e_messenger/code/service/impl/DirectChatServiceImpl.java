@@ -37,6 +37,12 @@ public class DirectChatServiceImpl extends DirectChatService {
     NotificationService notificationService;
 
     @Override
+    public void checkAvailable(Conversation conv) {
+        if(!conv.getType().equals(ConversationType.DIRECT))
+            throw new AppException(StatusCode.UNCATEGORIZED);
+    }
+
+    @Override
     public Conversation createDirectChat(String otherId, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         User other = userService.getUserById(otherId);
@@ -86,25 +92,22 @@ public class DirectChatServiceImpl extends DirectChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation direct = queryService.getConversationById(conversationId, userService.getCurrentUser().getId());
 
-        if(direct.getType().equals(ConversationType.DIRECT)){
-            ConversationDeletion message = ConversationDeletion.builder()
-                    .actionType(DetailActionType.DELETE)
-                    // parent fields
-                    .type(GeneralType.CONVERSATION)
-                    .content("Conversation deleted")
-                    .actorId(actor.getId())
-                    .actorName(actor.getDisplayName())
-                    .actorAvatarUrl(actor.getAvatarUrl())
-                    .conversationId(direct.getId())
-                    .time(Instant.now())
-                .build();
+        checkAvailable(direct);
 
-            conversationRepo.delete(direct);
+        ConversationDeletion message = ConversationDeletion.builder()
+                .actionType(DetailActionType.DELETE)
+                // parent fields
+                .type(GeneralType.CONVERSATION)
+                .content("Conversation deleted")
+                .actorId(actor.getId())
+                .actorName(actor.getDisplayName())
+                .actorAvatarUrl(actor.getAvatarUrl())
+                .conversationId(direct.getId())
+                .time(Instant.now())
+            .build();
 
-            notificationService.notifyConversationUpdate(direct, message);
-        }
-        else{
-            throw new AppException(StatusCode.UNCATEGORIZED);
-        }
+        conversationRepo.delete(direct);
+
+        notificationService.notifyConversationUpdate(direct, message);
     }
 }

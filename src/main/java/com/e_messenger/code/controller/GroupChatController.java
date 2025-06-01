@@ -11,7 +11,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
 
@@ -37,6 +39,18 @@ public class GroupChatController {
         Conversation result = groupChatService.changeName(groupId, newName, principal);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
+                .build();
+    }
+
+    @PutMapping("/{groupId}/avatars")
+    public ApiResponse<ConversationResponse> changeAvatar(
+            @PathVariable String groupId,
+            @RequestParam MultipartFile avatar,
+            Principal principal
+    ) throws IOException {
+        Conversation conv = groupChatService.changeAvatar(groupId, avatar, principal);
+        return ApiResponse.<ConversationResponse>builder()
+                .result(conversationMapper.toResponse(conv))
                 .build();
     }
 
