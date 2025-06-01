@@ -28,9 +28,9 @@ public class ConversationQueryController {
     ConversationMapper conversationMapper;
     private final UserService userService;
 
-    @GetMapping("/direct/{otherIdentifier}")
-    public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherIdentifier){
-        Conversation result = mainService.getDirectChat(otherIdentifier);
+    @GetMapping("/direct/{otherId}")
+    public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherId){
+        Conversation result = mainService.getDirectChat(otherId);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
@@ -41,14 +41,6 @@ public class ConversationQueryController {
         Conversation result = mainService.getConversationById(conversationId, userService.getCurrentUser().getId());
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
-                .build();
-    }
-    
-    @GetMapping("/{groupId}/participants")
-    public ApiResponse<List<Participant>> getParticipants(@PathVariable String groupId){
-        List<Participant> result = mainService.getParticipants(groupId);
-        return ApiResponse.<List<Participant>>builder()
-                .result(result)
                 .build();
     }
 

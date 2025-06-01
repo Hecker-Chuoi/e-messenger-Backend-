@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -41,47 +42,45 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     private void updateConversationInfo(Conversation conv, String curUserId){
         if(!conv.getType().equals(ConversationType.DIRECT))
             return;
-        // set conversation's name by other's name
-        conv.setConversationName(getDirectChatName(curUserId, conv.getParticipants()));
-        // set conversation's avatar by other's avatar
-        conv.setAvatarUrl(getDirectChatAvatarUrl(curUserId, conv.getParticipants()));
-    }
 
-    private String getDirectChatAvatarUrl(String curUserId, List<Participant> participants){
-        for(Participant participant : participants){
+        User other = null;
+        for(Participant participant : conv.getParticipants()){
             if(!participant.getParticipantId().equals(curUserId)){
-                User other = userService.getUserById(participant.getParticipantId());
-                return other.getAvatarUrl();
+                other = userService.getUserById(participant.getParticipantId());
             }
         }
-        return "";
+
+        if(other == null){
+            throw new AppException(StatusCode.UNCATEGORIZED);
+        }
+
+        // set conversation's name by other's name
+        conv.setConversationName(other.getDisplayName());
+        // set conversation's avatar by other's avatar
+        conv.setAvatarUrl(other.getAvatarUrl());
     }
 
     private String getDirectChatPattern(String id){
         return "^%s-|-%s$".formatted(id, id);
     }
 
-    private String getDirectChatName(String curUserId, List<Participant> ids){
-        Participant otherId = ids.getFirst().getParticipantId().equals(curUserId) ? ids.getLast() : ids.getFirst();
-        return otherId.getDisplayName();
-    }
-
     // scenario: find other by email, use user's id to call this method to get conversation
     @Override
-    public Conversation getDirectChat(String otherIdentifier){
+    public Conversation getDirectChat(String otherId){
         User curUser = userService.getCurrentUser();
-        User other = userService.getUserByIdentifier(otherIdentifier);
+        User other = userService.getUserById(otherId);
 
         if(curUser.equals(other))
             throw new AppException(StatusCode.CONVERSATION_NOT_FOUND);
 
-        Conversation result = conversationRepo.findConversationById(getDirectChatId(curUser, other)).orElseThrow(
+        Conversation conv = conversationRepo.findConversationById(getDirectChatId(curUser, other)).orElseThrow(
                 () -> new AppException(StatusCode.CONVERSATION_NOT_FOUND)
         );
-        result.setConversationName(other.getDisplayName());
-        result.setAvatarUrl(other.getAvatarUrl());
+        conv.setConversationName(other.getDisplayName());
+        conv.setAvatarUrl(other.getAvatarUrl());
+        conv.setParticipants(getParticipants(conv));
 
-        return result;
+        return conv;
     }
 
     @Override
@@ -94,17 +93,17 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         updateConversationInfo(conv, userId);
+        conv.setParticipants(getParticipants(conv));
 
         return conv;
     }
 
-    @Override
-    public List<Participant> getParticipants(String groupId) {
-        Conversation group = getConversationById(groupId, userService.getCurrentUser().getId());
+    private List<Participant> getParticipants(Conversation group) {
         List<Participant> result = group.getParticipants();
         for(Participant x : result){
             User user = userService.getUserById(x.getParticipantId());
             x.setAvatarUrl(user.getAvatarUrl());
+            x.setDisplayName(user.getDisplayName());
         }
         return result;
     }
@@ -118,6 +117,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         );
         for(Conversation conv : result){
             updateConversationInfo(conv, curUser.getId());
+            conv.setParticipants(getParticipants(conv));
         }
 
         return result;
@@ -127,10 +127,16 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
     public List<Conversation> getAllGroupChat(int pageNum, int pageSize) {
         User curUser = userService.getCurrentUser();
 
-        return conversationRepo.findConversationByParticipantIdsContainingAndType(
+        List<Conversation> result = conversationRepo.findConversationByParticipantIdsContainingAndType(
                 curUser.getId(), ConversationType.GROUP,
                 PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("lastMessageTime")))
         );
+
+        for(Conversation conv : result){
+            conv.setParticipants(getParticipants(conv));
+        }
+
+        return result;
     }
 
     @Override
@@ -144,6 +150,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
 
         for(Conversation conv : result){
             updateConversationInfo(conv, curUser.getId());
+            conv.setParticipants(getParticipants(conv));
         }
 
         return result;
