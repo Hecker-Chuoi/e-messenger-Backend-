@@ -1,15 +1,13 @@
 package com.e_messenger.code.service.impl;
 
+import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
+import com.e_messenger.code.entity.Conversation;
 import com.e_messenger.code.entity.Participant;
+import com.e_messenger.code.entity.User;
 import com.e_messenger.code.entity.enums.ConversationRole;
 import com.e_messenger.code.entity.enums.ConversationType;
-import com.e_messenger.code.dto.requests.conv.GroupCreationRequest;
-import com.e_messenger.code.dto.requests.conv.GroupUpdateRequest;
-import com.e_messenger.code.entity.Conversation;
-import com.e_messenger.code.entity.User;
 import com.e_messenger.code.entity.enums.DetailActionType;
 import com.e_messenger.code.entity.enums.GeneralType;
-import com.e_messenger.code.entity.message.ConversationNotification;
 import com.e_messenger.code.entity.message.conversation.general.ConversationCreation;
 import com.e_messenger.code.entity.message.conversation.general.ConversationDeletion;
 import com.e_messenger.code.entity.message.conversation.general.LeaveConversation;
@@ -33,7 +31,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
-import java.time.Instant;
 import java.time.Instant;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -61,12 +58,12 @@ public class GroupChatServiceImpl extends GroupChatService {
     @Value("${cloud.avatar.groupDefault}")
     String defaultGroupAvatarUrl;
 
-    private <T> List<T> addAll(List<T> list, List<T> items){
+    private <T> List<T> addAll(List<T> list, List<T> items) {
         list.addAll(items);
         return list;
     }
 
-    private List<Participant> removeAll(List<Participant> list, List<String> items){
+    private List<Participant> removeAll(List<Participant> list, List<String> items) {
         Set<String> set = new LinkedHashSet<>(items);
         list.removeIf(e -> set.contains(e.getParticipantId()));
         return list;
@@ -76,12 +73,12 @@ public class GroupChatServiceImpl extends GroupChatService {
     public Conversation createGroupChat(GroupCreationRequest request, Principal principal) {
         List<User> validUsers = userUtil.getValidUsers(request.getParticipantIds());
 
-        if(validUsers.size() < 3)
+        if (validUsers.size() < 3)
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         User actor = userService.getUserById(principal.getName());
 
-        if(!request.getParticipantIds().getFirst().equals(actor.getId())) {
+        if (!request.getParticipantIds().getFirst().equals(actor.getId())) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
 
@@ -120,7 +117,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER)) {
+        if (!participantUtil.hasRole(group, userService.getUserById(principal.getName()), ConversationRole.OWNER)) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
 
@@ -150,7 +147,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         return group;
     }
 
-    public Conversation changeAvatar(String groupId, String newAvatarUrl, Principal principal){
+    public Conversation changeAvatar(String groupId, String newAvatarUrl, Principal principal) {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
@@ -181,13 +178,13 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasManagementRole(group, actor))
+        if (!participantUtil.hasManagementRole(group, actor))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         LinkedHashSet<User> curUserList = new LinkedHashSet<>(participantUtil.toUsers(group.getParticipants()));
         List<User> validUsers = userUtil.getValidUsers(participantIds);
 
-        if(validUsers.stream().anyMatch(curUserList::contains)){
+        if (validUsers.stream().anyMatch(curUserList::contains)) {
             throw new AppException(StatusCode.UNCATEGORIZED);
         }
 
@@ -223,13 +220,13 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.canAffect(group, actor, removeIds))
+        if (!participantUtil.canAffect(group, actor, removeIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         group.setParticipants(
                 removeAll(group.getParticipants(), removeIds)
         );
-        if(group.getParticipants().isEmpty())
+        if (group.getParticipants().isEmpty())
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ChangeParticipant message = ChangeParticipant.builder()
@@ -260,7 +257,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
+        if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         participantUtil.changeOwner(group, principal.getName(), newOwnerId);
@@ -294,7 +291,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
+        if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         List<User> validUsers = userUtil.getValidUsers(coOwnerIds);
@@ -330,7 +327,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.canAffect(group, actor, participantIds))
+        if (!participantUtil.canAffect(group, actor, participantIds))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         List<User> validUsers = userUtil.getValidUsers(participantIds);
@@ -365,9 +362,9 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = queryService.getConversationById(groupId, principal.getName());
 
-        if(group.getParticipants().size() == 1)
+        if (group.getParticipants().size() == 1)
             throw new AppException(StatusCode.UNCATEGORIZED);
-        if(participantUtil.getParticipantRole(group, principal.getName()).equals(ConversationRole.OWNER))
+        if (participantUtil.getParticipantRole(group, principal.getName()).equals(ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         group.setParticipants(
@@ -400,7 +397,7 @@ public class GroupChatServiceImpl extends GroupChatService {
         User actor = userService.getUserById(principal.getName());
         Conversation group = conversationQueryService.getConversationById(groupId, principal.getName());
 
-        if(!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
+        if (!participantUtil.hasRole(group, actor, ConversationRole.OWNER))
             throw new AppException(StatusCode.UNCATEGORIZED);
 
         ConversationDeletion message = ConversationDeletion.builder()

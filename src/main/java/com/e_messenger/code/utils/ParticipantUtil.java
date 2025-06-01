@@ -33,9 +33,7 @@ public class ParticipantUtil {
     public Participant toParticipant(User user, ConversationRole role){
         return Participant.builder()
                 .participantId(user.getId())
-                .displayName(user.getDisplayName())
                 .phoneNumber(user.getPhoneNumber())
-                .avatarUrl(user.getAvatarUrl())
                 .role(role)
                 .joinAt(Instant.now())
                 .build();
