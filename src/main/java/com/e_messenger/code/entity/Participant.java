@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class Participant {
     String participantId;
     String displayName;
-    String phoneNumber;
+    String email;
     String avatarUrl;
     ConversationRole role;
     Instant joinAt;

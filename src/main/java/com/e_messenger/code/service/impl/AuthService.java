@@ -40,7 +40,7 @@ public class AuthService {
     int refreshTokenDuration;
 
     public AuthResponse logIn(AuthRequest request){
-        User user = userService.getUserByIdentifier(request.getIdentifier());
+        User user = userService.getUserByEmail(request.getEmail());
         if(encoder.matches(request.getPassword(), user.getPassword()))
             return AuthResponse.builder()
                     .userId(user.getId())

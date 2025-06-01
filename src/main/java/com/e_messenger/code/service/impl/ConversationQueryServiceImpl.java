@@ -66,11 +66,10 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         return otherId.getDisplayName();
     }
 
-    // scenario: find other by email, use user's id to call this method to get conversation
     @Override
-    public Conversation getDirectChat(String otherIdentifier){
+    public Conversation getDirectChat(String otherId){
         User curUser = userService.getCurrentUser();
-        User other = userService.getUserByIdentifier(otherIdentifier);
+        User other = userService.getUserById(otherId);
 
         if(curUser.equals(other))
             throw new AppException(StatusCode.CONVERSATION_NOT_FOUND);
@@ -78,9 +77,9 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
         Conversation result = conversationRepo.findConversationById(getDirectChatId(curUser, other)).orElseThrow(
                 () -> new AppException(StatusCode.CONVERSATION_NOT_FOUND)
         );
+
         result.setConversationName(other.getDisplayName());
         result.setAvatarUrl(other.getAvatarUrl());
-
         return result;
     }
 

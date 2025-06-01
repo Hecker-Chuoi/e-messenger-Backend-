@@ -34,7 +34,7 @@ public class ParticipantUtil {
         return Participant.builder()
                 .participantId(user.getId())
                 .displayName(user.getDisplayName())
-                .phoneNumber(user.getPhoneNumber())
+                .email(user.getEmail())
                 .avatarUrl(user.getAvatarUrl())
                 .role(role)
                 .joinAt(Instant.now())

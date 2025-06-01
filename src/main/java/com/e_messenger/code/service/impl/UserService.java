@@ -50,8 +50,8 @@ public class UserService {
 
 // create
     public User signUp(UserCreationRequest request) {
-        if(userRepo.findByPhoneNumber(request.getPhoneNumber()).isPresent())
-            throw new AppException(StatusCode.PHONE_USED);
+        if(userRepo.findByEmail(request.getEmail()).isPresent())
+            throw new AppException(StatusCode.UNCATEGORIZED);
 
         User user = userMapper.toEntity(request);
         user.setId(UUID.randomUUID().toString());
@@ -72,8 +72,8 @@ public class UserService {
     }
 
 // read
-    public User getUserByIdentifier(String identifier) {
-        Optional<User> userByPhone = userRepo.findByPhoneNumber(identifier);
+    public User getUserByEmail(String email) {
+        Optional<User> userByPhone = userRepo.findByEmail(email);
         if (userByPhone.isPresent()) {
             return userByPhone.get();
         }
@@ -113,8 +113,6 @@ public class UserService {
     public String changePassword(PasswordChangeRequest request){
         User user = getCurrentUser();
         if(!encoder.matches(request.getOldPassword(), user.getPassword()))
-            throw new AppException(StatusCode.UNAUTHENTICATED);
-        if(!request.getNewPassword().equals(request.getConfirmedPassword()))
             throw new AppException(StatusCode.UNAUTHENTICATED);
 
         user.setPassword(encoder.encode(request.getNewPassword()));

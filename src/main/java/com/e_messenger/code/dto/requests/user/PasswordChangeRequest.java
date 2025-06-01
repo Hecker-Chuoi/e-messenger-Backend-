@@ -16,5 +16,4 @@ public class PasswordChangeRequest {
     String oldPassword;
     @PasswordValidation
     String newPassword;
-    String confirmedPassword;
 }

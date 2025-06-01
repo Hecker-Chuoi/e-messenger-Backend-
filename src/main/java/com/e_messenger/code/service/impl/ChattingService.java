@@ -35,7 +35,7 @@ public class ChattingService {
 
     UserService userService;
     ConversationQueryServiceImpl conversationQueryService;
-    private final NotificationService notificationService;
+    NotificationService notificationService;
 
     public Message sendText(String conversationId, TextMessageRequest request, Principal principal){
         User curUser = userService.getUserById(principal.getName());
@@ -88,7 +88,7 @@ public class ChattingService {
     public List<Message> getMessageHistory(String conversationId, int pageNum, int pageSize){
         Conversation conversation = conversationQueryService.getConversationById(conversationId, userService.getCurrentUser().getId());
         return mainRepo.findMessagesByConversationId(conversationId,
-                PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.desc("sentAt"))))
+                PageRequest.of(pageNum, pageSize, Sort.by(Sort.Order.asc("time"))))
                 .stream().toList();
     }
 }

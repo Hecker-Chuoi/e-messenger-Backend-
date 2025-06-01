@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -28,17 +29,17 @@ public class ConversationQueryController {
     ConversationMapper conversationMapper;
     private final UserService userService;
 
-    @GetMapping("/direct/{otherIdentifier}")
-    public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherIdentifier){
-        Conversation result = mainService.getDirectChat(otherIdentifier);
+    @GetMapping("/direct/{otherId}")
+    public ApiResponse<ConversationResponse> getDirectChat(@PathVariable String otherId){
+        Conversation result = mainService.getDirectChat(otherId);
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();
     }
 
     @GetMapping("/{conversationId}")
-    public ApiResponse<ConversationResponse> getConversation(@PathVariable String conversationId){
-        Conversation result = mainService.getConversationById(conversationId, userService.getCurrentUser().getId());
+    public ApiResponse<ConversationResponse> getConversation(@PathVariable String conversationId, Principal principal){
+        Conversation result = mainService.getConversationById(conversationId, principal.getName());
         return ApiResponse.<ConversationResponse>builder()
                 .result(conversationMapper.toResponse(result))
                 .build();

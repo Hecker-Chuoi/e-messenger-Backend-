@@ -22,22 +22,20 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class UserResponse {
     String id;
-    String phoneNumber;
+    String email;
 
-// thông tin cá nhân
+    // thông tin cá nhân
     Instant dob;
     String displayName;
-    String email;
     Gender gender;
+    String phoneNumber;
 
-// thông tin hồ sơ
+    // thông tin hồ sơ
     String avatarUrl;
     ActiveStatusService.ActiveStatus activeStatus;
     String bio;
     Instant updatedAt;
 
-// thông tin hỗ trợ FE
+    // thông tin hỗ trợ FE
     String fcmToken;
-
-    Boolean isDeleted = false;
 }

@@ -8,6 +8,7 @@ import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
 import com.e_messenger.code.mapstruct.UserMapper;
 import com.e_messenger.code.service.impl.UserService;
+import com.e_messenger.code.utils.validation.EmailValidation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -26,20 +27,19 @@ public class UserController {
     UserService service;
     UserMapper mapper;
 
-//create
+    //create
     @PostMapping
-    public ApiResponse<UserResponse> signUp(@RequestParam(value = "avatar", required = false) MultipartFile avatar,
-                                            @RequestBody @Valid UserCreationRequest request){
+    public ApiResponse<UserResponse> signUp(@RequestBody @Valid UserCreationRequest request) {
         User result = service.signUp(request);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
                 .build();
     }
 
-//read
+    //read
     @SecurityRequirement(name = "user token")
     @GetMapping("/my-info")
-    public ApiResponse<UserResponse> getMyInfo(){
+    public ApiResponse<UserResponse> getMyInfo() {
         User result = service.getCurrentUser();
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
@@ -47,18 +47,18 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "user token")
-    @GetMapping("/{identifier}")
-    public ApiResponse<UserResponse> findUser(@PathVariable String identifier){
-        User result = service.getUserByIdentifier(identifier);
+    @GetMapping("/{email}")
+    public ApiResponse<UserResponse> findUser(@PathVariable @EmailValidation String email) {
+        User result = service.getUserByEmail(email);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
                 .build();
     }
 
-//update
+    //update
     @SecurityRequirement(name = "user token")
     @PutMapping
-    public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request){
+    public ApiResponse<UserResponse> updateUser(@RequestBody @Valid UserUpdateRequest request) {
         User user = service.updateInfo(request);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(user))
@@ -76,7 +76,7 @@ public class UserController {
 
     @SecurityRequirement(name = "user token")
     @PutMapping("/passwords")
-    public ApiResponse<String> changePassword(@RequestBody @Valid PasswordChangeRequest request){
+    public ApiResponse<String> changePassword(@RequestBody @Valid PasswordChangeRequest request) {
         return ApiResponse.<String>builder()
                 .result(service.changePassword(request))
                 .build();
@@ -84,7 +84,7 @@ public class UserController {
 
     @SecurityRequirement(name = "user token")
     @PutMapping("/fcm-token")
-    public ApiResponse<UserResponse> updateFcmToken(@RequestBody String newToken){
+    public ApiResponse<UserResponse> updateFcmToken(@RequestBody String newToken) {
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(service.updateFcmToken(newToken)))
                 .build();

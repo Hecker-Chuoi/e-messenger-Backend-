@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -28,24 +29,21 @@ public class User {
     String id;
 
     @Indexed(unique = true)
-    String phoneNumber;
+    String email;
     String password;
 
     // thông tin cá nhân
     Instant dob;
     Gender gender;
     String displayName;
-    String email;
+    String phoneNumber;
 
     // thông tin hồ sơ
     String avatarUrl;
     String bio;
     Instant updatedAt;
+    @Transient
     ActiveStatusService.ActiveStatus activeStatus;
-
-    // Account is deleted
-    @Builder.Default
-    Boolean isDeleted = false;
 
     // thông tin hỗ trợ FE
     String fcmToken;
