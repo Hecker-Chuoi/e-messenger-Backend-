@@ -34,7 +34,7 @@ public class GroupChatController {
                 .build();
     }
 
-    @PutMapping("/{groupId}")
+    @PutMapping("/{groupId}/name")
     public ApiResponse<ConversationResponse> changeName(@PathVariable String groupId, @RequestBody String newName, Principal principal){
         Conversation result = groupChatService.changeName(groupId, newName, principal);
         return ApiResponse.<ConversationResponse>builder()
