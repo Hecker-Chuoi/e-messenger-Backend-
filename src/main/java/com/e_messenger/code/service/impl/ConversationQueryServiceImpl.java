@@ -112,6 +112,7 @@ public class ConversationQueryServiceImpl implements ConversationQueryService {
             User user = userService.getUserById(x.getParticipantId());
             x.setAvatarUrl(user.getAvatarUrl());
             x.setDisplayName(user.getDisplayName());
+            x.setFcmToken(user.getFcmToken());
         }
         return result;
     }

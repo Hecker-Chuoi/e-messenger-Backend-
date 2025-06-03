@@ -22,6 +22,8 @@ public class Participant {
     String displayName;
     @Transient
     String avatarUrl;
+    @Transient
+    String fcmToken;
 
     @PersistenceCreator
     public Participant(String participantId, String phoneNumber, ConversationRole role, Instant joinAt) {
