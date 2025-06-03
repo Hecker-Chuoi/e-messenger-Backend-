@@ -125,6 +125,8 @@ public class UserService {
     public User updateFcmToken(String newToken){
         User user = getCurrentUser();
         user.setFcmToken(newToken);
+
+        userRepo.save(user);
         return user;
     }
 }
