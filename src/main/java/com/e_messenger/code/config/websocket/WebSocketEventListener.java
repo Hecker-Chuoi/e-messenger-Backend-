@@ -17,13 +17,13 @@ public class WebSocketEventListener {
     ActiveStatusService statusService;
 
     @EventListener
-    public void listenWebSocketConnectedEvent(SessionConnectedEvent event) throws JsonProcessingException {
+    public void listenWebSocketConnectedEvent(SessionConnectedEvent event){
         String userId = event.getUser().getName();
         statusService.setActiveStatus(userId, true);
     }
 
     @EventListener
-    public void listenWebSocketDisconnectEvent(SessionDisconnectEvent event) throws JsonProcessingException {
+    public void listenWebSocketDisconnectEvent(SessionDisconnectEvent event){
         String userId = event.getUser().getName();
         statusService.setActiveStatus(userId, false);
     }

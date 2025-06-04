@@ -23,9 +23,9 @@ public class AuthController {
     }
 
     @GetMapping("/refresh-tokens")
-    public ApiResponse<AuthResponse> getNewAccessToken(){
+    public ApiResponse<AuthResponse> getNewAccessToken(@RequestParam String refreshToken){
         return ApiResponse.<AuthResponse>builder()
-                .result(service.refreshAccessToken())
+                .result(service.refreshAccessToken(refreshToken))
                 .build();
     }
 }

@@ -1,11 +1,9 @@
 package com.e_messenger.code.dto.requests.user;
 
 import com.e_messenger.code.entity.enums.Gender;
-import com.e_messenger.code.utils.jackson.deserializer.LocalDateDeserializer;
 import com.e_messenger.code.utils.validation.EmailValidation;
 import com.e_messenger.code.utils.validation.PasswordValidation;
 import com.e_messenger.code.utils.validation.PhoneValidation;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

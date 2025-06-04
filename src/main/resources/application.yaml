@@ -38,6 +38,10 @@ spring:
     serialization:
       write-dates-as-timestamps: false
 
+web-socket:
+  active-status:
+    ttl: 24 #hours
+
 jwt:
   duration:
     access-token: 180
@@ -49,6 +53,9 @@ api-config:
   title: "E-messenger"
   description: "Chat app"
   version: "1.0.0"
+
+active-status:
+  ttl: 7
 
 logging:
   level:

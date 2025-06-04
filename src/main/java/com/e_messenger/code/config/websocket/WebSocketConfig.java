@@ -25,21 +25,20 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setMessageSizeLimit(1024 * 1024 * 10);
     }
 
-//    @Bean
-//    public ThreadPoolTaskScheduler heartbeatTaskScheduler() {
-//        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-//        scheduler.setPoolSize(1);
-//        scheduler.setThreadNamePrefix("wss-heartbeat-thread-");
-//        scheduler.initialize();
-//        return scheduler;
-//    }
+    @Bean
+    public ThreadPoolTaskScheduler heartbeatTaskScheduler() {
+        ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
+        scheduler.setPoolSize(1);
+        scheduler.setThreadNamePrefix("wss-heartbeat-thread-");
+        scheduler.initialize();
+        return scheduler;
+    }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/topic", "/messages", "/conversations", "/general");
-//        config.enableSimpleBroker("status")
-//                        .setHeartbeatValue(new long[] {10000, 10000})
-//                .setTaskScheduler(heartbeatTaskScheduler());
+        config.enableSimpleBroker("/topic", "/messages", "/conversations", "/general")
+                .setHeartbeatValue(new long[] {0, 10000})
+                .setTaskScheduler(heartbeatTaskScheduler());
         config.setApplicationDestinationPrefixes("/chat");
     }
 
