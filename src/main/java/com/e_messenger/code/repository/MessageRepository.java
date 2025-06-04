@@ -1,6 +1,6 @@
 package com.e_messenger.code.repository;
 
-import com.e_messenger.code.entity.Message;
+import com.e_messenger.code.entity.message.Message;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

@@ -1,8 +1,8 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.PasswordChangeRequest;
-import com.e_messenger.code.dto.requests.UserCreationRequest;
-import com.e_messenger.code.dto.requests.UserUpdateRequest;
+import com.e_messenger.code.dto.requests.user.PasswordChangeRequest;
+import com.e_messenger.code.dto.requests.user.UserCreationRequest;
+import com.e_messenger.code.dto.requests.user.UserUpdateRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.UserResponse;
 import com.e_messenger.code.entity.User;
@@ -14,6 +14,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/users")
@@ -25,7 +28,8 @@ public class UserController {
 
 //create
     @PostMapping
-    public ApiResponse<UserResponse> signUp(@RequestBody @Valid UserCreationRequest request){
+    public ApiResponse<UserResponse> signUp(@RequestParam(value = "avatar", required = false) MultipartFile avatar,
+                                            @RequestBody @Valid UserCreationRequest request){
         User result = service.signUp(request);
         return ApiResponse.<UserResponse>builder()
                 .result(mapper.toResponse(result))
@@ -62,10 +66,27 @@ public class UserController {
     }
 
     @SecurityRequirement(name = "user token")
+    @PutMapping("/avatars")
+    public ApiResponse<UserResponse> updateAvatar(@RequestParam MultipartFile avatar) throws IOException {
+        User user = service.setAvatar(avatar);
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(user))
+                .build();
+    }
+
+    @SecurityRequirement(name = "user token")
     @PutMapping("/passwords")
     public ApiResponse<String> changePassword(@RequestBody @Valid PasswordChangeRequest request){
         return ApiResponse.<String>builder()
                 .result(service.changePassword(request))
+                .build();
+    }
+
+    @SecurityRequirement(name = "user token")
+    @PutMapping("/fcm-token")
+    public ApiResponse<UserResponse> updateFcmToken(@RequestBody String newToken){
+        return ApiResponse.<UserResponse>builder()
+                .result(mapper.toResponse(service.updateFcmToken(newToken)))
                 .build();
     }
 

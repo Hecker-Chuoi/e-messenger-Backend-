@@ -1,4 +1,4 @@
-package com.e_messenger.code.dto.requests;
+package com.e_messenger.code.dto.requests.user;
 
 import com.e_messenger.code.utils.validation.PasswordValidation;
 import lombok.AllArgsConstructor;

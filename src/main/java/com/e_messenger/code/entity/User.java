@@ -1,5 +1,7 @@
 package com.e_messenger.code.entity;
 
+import com.e_messenger.code.entity.enums.Gender;
+import com.e_messenger.code.service.impl.ActiveStatusService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -29,17 +32,21 @@ public class User {
     String password;
 
     // thông tin cá nhân
-    LocalDate dob;
+    Instant dob;
+    Gender gender;
     String displayName;
     String email;
 
     // thông tin hồ sơ
-//    String avatarUrl;
-//    ActiveStatus activeStatus;
+    String avatarUrl;
     String bio;
-    LocalDateTime updatedAt;
+    Instant updatedAt;
+    ActiveStatusService.ActiveStatus activeStatus;
 
     // Account is deleted
     @Builder.Default
     Boolean isDeleted = false;
+
+    // thông tin hỗ trợ FE
+    String fcmToken;
 }

@@ -1,4 +1,4 @@
-package com.e_messenger.code.config;
+package com.e_messenger.code.config.security;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

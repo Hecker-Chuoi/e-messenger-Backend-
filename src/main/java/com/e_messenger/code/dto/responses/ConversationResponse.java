@@ -8,7 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 
 @Data
@@ -20,12 +20,13 @@ public class ConversationResponse {
     String id;
 
     ConversationType type;
+    String avatarUrl;
     String conversationName;
     List<Participant> participants;
 
     //fields for ui
     String lastMessage;
-    String lastSenderId;
-    String lastSenderName;
-    LocalDateTime lastMessageTime;
+    String lastActorId;
+    String lastActorName;
+    Instant lastMessageTime;
 }

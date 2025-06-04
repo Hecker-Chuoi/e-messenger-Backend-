@@ -1,6 +1,6 @@
 package com.e_messenger.code.controller;
 
-import com.e_messenger.code.dto.requests.AuthRequest;
+import com.e_messenger.code.dto.requests.user.AuthRequest;
 import com.e_messenger.code.dto.responses.ApiResponse;
 import com.e_messenger.code.dto.responses.AuthResponse;
 import com.e_messenger.code.service.impl.AuthService;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
     AuthService service;
 
-    @PostMapping("/log-in")
+    @PostMapping("/login")
     public ApiResponse<AuthResponse> logIn(@RequestBody AuthRequest request){
         return ApiResponse.<AuthResponse>builder()
                 .result(service.logIn(request))
@@ -23,9 +23,9 @@ public class AuthController {
     }
 
     @GetMapping("/refresh-tokens")
-    public ApiResponse<AuthResponse> getNewAccessToken(){
+    public ApiResponse<AuthResponse> getNewAccessToken(@RequestParam String refreshToken){
         return ApiResponse.<AuthResponse>builder()
-                .result(service.refreshAccessToken())
+                .result(service.refreshAccessToken(refreshToken))
                 .build();
     }
 }

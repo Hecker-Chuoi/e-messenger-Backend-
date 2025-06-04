@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,33 +30,32 @@ public class ParticipantUtil {
                 .collect(Collectors.toList());
     }
 
-    public Participant toParticipants(User user, ConversationRole role){
+    public Participant toParticipant(User user, ConversationRole role){
         return Participant.builder()
                 .participantId(user.getId())
-                .displayName(user.getDisplayName())
                 .phoneNumber(user.getPhoneNumber())
                 .role(role)
-                .joinAt(LocalDateTime.now())
+                .joinAt(Instant.now())
                 .build();
     }
 
     public List<Participant> toMembers(List<User> users){
-        return users.stream().map(e -> toParticipants(e, ConversationRole.MEMBER))
+        return users.stream().map(e -> toParticipant(e, ConversationRole.MEMBER))
                 .collect(Collectors.toList());
     }
 
     public List<Participant> toDirectParticipants(User user1, User user2){
         return List.of(
-                toParticipants(user1, ConversationRole.MEMBER),
-                toParticipants(user2, ConversationRole.MEMBER)
+                toParticipant(user1, ConversationRole.MEMBER),
+                toParticipant(user2, ConversationRole.MEMBER)
         );
     }
 
     public List<Participant> toGroupParticipants(List<User> users){
         List<Participant> result = new ArrayList<>();
-        result.add(toParticipants(users.getFirst(), ConversationRole.OWNER));
+        result.add(toParticipant(users.getFirst(), ConversationRole.OWNER));
         for(int i = 1; i < users.size(); ++i){
-            result.add(toParticipants(users.get(i), ConversationRole.MEMBER));
+            result.add(toParticipant(users.get(i), ConversationRole.MEMBER));
         }
         return result;
     }
@@ -103,7 +102,7 @@ public class ParticipantUtil {
     public void changeOwner(Conversation group, String oldOwnerId, String newOwnerId){
         for(Participant x : group.getParticipants()){
             if(x.getParticipantId().equals(oldOwnerId) && x.getRole().equals(ConversationRole.OWNER)){
-                x.setRole(ConversationRole.CO_OWNER);
+                x.setRole(ConversationRole.MEMBER);
             }
             if(x.getParticipantId().equals(newOwnerId)){
                 x.setRole(ConversationRole.OWNER);

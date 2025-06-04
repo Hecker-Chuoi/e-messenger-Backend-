@@ -8,8 +8,7 @@ import java.util.List;
 
 public interface ConversationQueryService {
     Conversation getDirectChat(String otherIdentifier);
-    Conversation getConversationById(String conversationId);
-    List<Participant> getParticipants(String conversationId);
+    Conversation getConversationById(String conversationId, String userId);
     List<Conversation> getAllDirectChat(int pageNum, int pageSize);
     List<Conversation> getAllGroupChat(int pageNum, int pageSize);
     List<Conversation> getAllConversation(int pageNum, int pageSize);

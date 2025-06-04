@@ -11,6 +11,37 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/e-messenger
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "nguyentienht1910@gmail.com"
+    password: "jibe mhgs fzjp yupe"
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+  cache:
+    redis:
+      otp-ttl: 120
+
+  jackson:
+    date-format: com.fasterxml.jackson.databind.util.StdDateFormat
+    serialization:
+      write-dates-as-timestamps: false
+
+web-socket:
+  active-status:
+    ttl: 24 #hours
+
 jwt:
   duration:
     access-token: 180
@@ -22,3 +53,23 @@ api-config:
   title: "E-messenger"
   description: "Chat app"
   version: "1.0.0"
+
+active-status:
+  ttl: 7
+
+logging:
+  level:
+    org:
+      springframework:
+        messaging: DEBUG
+        web:
+          socket: DEBUG
+
+cloud:
+  config:
+    url: "cloudinary://315221571495558:fscMIaDJBc8RZaWoa7jXDNRSsUI@dtvuu5b2g"
+  avatar:
+    groupDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1748166283/8f340942-8c20-4573-9e99-7899a75d1589.png"
+    otherDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746720818/other_default_avatar_fif3lm.jpg"
+    manDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746719010/man_default_avatar_d5ck0s.jpg"
+    womanDefault: "https://res.cloudinary.com/dtvuu5b2g/image/upload/v1746719010/woman_default_avatar_i1telw.jpg"

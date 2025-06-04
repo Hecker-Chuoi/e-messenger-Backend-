@@ -1,4 +1,4 @@
-package com.e_messenger.code.config;
+package com.e_messenger.code.config.security;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -34,30 +34,39 @@ public class WebSecurityConfig {
             "/swagger-ui/**",
             "/v3/api-docs/**",
             "/users",
-            "/auth/log-in"
+            "/auth/login",
+            "/ws/**",
+            "/test/**",
+            "/static/**",
+            "/resources/**",
+            "/js/**",
+            "/upload/**",
+            "/test/**"
     };
 
     String[] USER_ENDPOINTS = {
             "/auth/**",
+            "/chat/**",
             "/users/**",
             "/conversations/**",
             "/direct/**",
             "/group/**",
-            "/chatting/**",
+            "/files/**",
+            "/contacts/**"
     };
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
         security
                 .cors(cors -> cors.configure(security))
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
                         .requestMatchers(USER_ENDPOINTS).authenticated()
                 )
                 .oauth2ResourceServer(server -> server.jwt(
-                        jwtConfigurer -> jwtConfigurer.decoder(decoder())
-                ))
-                .csrf(AbstractHttpConfigurer::disable);
+                        jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+                ));
 
         return security.build();
     }
@@ -77,7 +86,8 @@ public class WebSecurityConfig {
         };
     }
 
-    private JwtDecoder decoder(){
+    @Bean
+    public JwtDecoder jwtDecoder(){
         SecretKeySpec spec = new SecretKeySpec(secretKey.getBytes(), "HS512");
         return NimbusJwtDecoder
                 .withSecretKey(spec)
